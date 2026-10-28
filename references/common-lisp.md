@@ -1,174 +1,104 @@
 # Google Common Lisp guides
 
+This is an **editorially condensed adaptation** of Google's Common Lisp Style Guide
+and Common Lisp Effective Programming at upstream commit
+`572c673d9058242c049fbc8248b17029726c7afa`, by Google and the upstream contributors.
+It retains the source sections, requirements, recommendations, key exceptions, and
+selected examples while removing repeated explanations and background. The
+Effective Programming material remains a supplement, not an additional set of
+style rules. This is unofficial and is not endorsed by Google. Original sources,
+official publications, attribution, and licenses are listed in
+[Sources and licensing](#sources-and-licensing); consulting them is optional.
 
 ## Google Common Lisp Style Guide
 
 ### Introduction
 
-This guide is not a Common Lisp tutorial. Rather, it recommends formatting,
-structure, and stylistic choices for Common Lisp code. Maintainers of existing
-code should balance these recommendations with the benefit of maintaining
-consistency within existing code.
-
-We welcome constructive feedback on how to improve this guide. If you find
-mistakes in this document, you may file bugs in the
-[GitHub issue tracker](https://github.com/google/styleguide/issues). Please put
-"[Lisp]" in the issue title since the repository contains Style Guides for
-several languages.
+This guide recommends formatting, structure, and stylistic choices; it is not a
+Common Lisp tutorial. Balance these recommendations against consistency when
+maintaining existing code. Upstream feedback can be filed in the
+[Google styleguide issue tracker](https://github.com/google/styleguide/issues),
+with `[Lisp]` in the title.
 
 #### References
 
--   For a guide to effective Lisp programming at Google, see
-    [The Google Lisp Guide to Effective Programming](#google-common-lisp-effective-programming).
-
--   For basic information about the language, please consult
-    [Practical Common Lisp](https://www.gigamonkeys.com/book/).
-
--   For a language reference, please consult the
-    [Common Lisp HyperSpec](https://www.lispworks.com/documentation/HyperSpec/Front/index.htm).
-
--   For more detailed style guidance, take (with a pinch of salt) a look at
-    [Peter Norvig and Kent Pitman's style guide](https://www.cs.umd.edu/~nau/cmsc421/norvig-lisp-style.pdf).
+- [Effective Programming](#google-common-lisp-effective-programming), below, is
+  the companion guide.
+- [Practical Common Lisp](https://www.gigamonkeys.com/book/) introduces the language.
+- [Common Lisp HyperSpec](https://www.lispworks.com/documentation/HyperSpec/Front/index.htm)
+  is the language reference.
+- [Norvig and Pitman's style guide](https://www.cs.umd.edu/~nau/cmsc421/norvig-lisp-style.pdf)
+  offers further guidance, to be taken with a pinch of salt.
 
 ### Existing Code
 
--   Fix old code as you go.
--   Don't do mass style fixes without warning.
-
-A lot of Lisp code was written before these guidelines existed. You should fix
-violations as you encounter them in the course of your normal coding. Only do so
-when such fixes are easy to implement and do not greatly increase the size of
-the change. In these cases, consider splitting the style fix into a separate
-change.
-
-You must not fix violations en masse without warning other developers and
-coordinating with them, so as not to make the merging of large branches more
-difficult than it already is.
+Fix violations encountered during normal work when the fix is easy and does not
+substantially enlarge the change; consider a separate change for the style fix.
+You **must not** make mass style fixes without warning and coordinating with
+other developers, because they complicate branch merges.
 
 ### Formatting
 
 #### Punctuation, Spelling and Grammar
 
--   Use correct spelling in your comments and code.
--   Use proper grammar in your comments and documentation.
-
-Pay attention to punctuation, spelling and grammar; it is easier to read
-well-written comments than badly written ones.
-
-Comments should be as readable as narrative text, with proper capitalization and
-punctuation. In many cases, complete sentences are more readable than sentence
-fragments. Shorter comments, such as comments at the end of a line of code, can
-sometimes be less formal, but you should be consistent with your style.
+Use correct spelling in code and comments, and proper grammar in comments and
+documentation. Comments should read as narrative text, with capitalization and
+punctuation; complete sentences are often clearer. Short end-of-line comments
+may be less formal, but keep their style consistent.
 
 #### Line length
 
--   Format source code so that no line is longer than 100 characters.
-
-Some line length restriction is better than none at all. While old text
-terminals used to make 80 columns the standard, these days, allowing 100 columns
-seems better, since good style encourages the use of descriptive variables and
-function names.
+Format source so no line exceeds **100 characters**.
 
 #### Form length
 
--   Prefer small and focused top-level forms.
-
-Long top-level forms (such as functions and macros) are sometimes appropriate,
-so no hard limit is placed on their length. If a function or macro exceeds about
-40 lines, consider whether it can be broken up without harming the structure of
-the program.
-
-Even if your long form works perfectly now, someone modifying it in a few months
-may add new behavior. This could result in bugs that are hard to find. Keeping
-your forms short and simple makes it easier for other people to read and modify
-your code.
-
-Do not be intimidated by modifying existing code. If working with an overly long
-function proves to be difficult -- errors are hard to debug, or a piece of it is
-required in several different contexts -- consider breaking up the function into
-smaller and more manageable pieces.
+Prefer small, focused top-level forms. There is no hard limit, but above about
+**40 lines**, consider breaking a function or macro up without harming the
+program's structure. Also consider extraction when a long function becomes hard
+to debug or a part is needed in several contexts.
 
 #### Indentation
 
--   Use spaces, not tabs, to indent code.
--   Binding data of a binding form should be:
-    -   indented four spaces when on a new line or
-    -   aligned with the first binding data form otherwise.
--   Bodies of a binding form should be:
-    -   indented two spaces when on a new line or
-    -   aligned with the first form in the body otherwise.
--   Parameters of a function call should be
-    -   aligned with the call itself when on a new line or
-    -   aligned with the first parameter otherwise.
--   Special parameters in function and macro declarations (`&key`, `&optional`,
-    ...) should be:
-    -   aligned with the special parameter declaration when on a new line or
-    -   aligned with the first special parameter otherwise.
--   Prefer fitting all parameters to a function:
-    -   on a single line when possible, or
-    -   one parameter per line otherwise.
--   Arguments to a loop form (loop keywords), and their arguments in turn should
-    be:
-    -   indented two spaces when the first argument is on a new line or
-    -   aligned with the first argument otherwise.
+Use spaces, **not tabs**; configure your editor not to insert tabs. In Emacs:
+`(setq-default indent-tabs-mode nil)`.
 
-Common Lisp indentation in Emacs is provided by the cl-indent library. The
-latest version of cl-indent is packaged with
-[SLIME](https://www.common-lisp.net/project/slime/) (under
-contrib/slime-cl-indent.el). After installing SLIME, set up Emacs to load SLIME
-automatically using
-[these instructions](https://www.common-lisp.net/project/slime/doc/html/Loading-Contribs.html),
-adding slime-indentation to the list of contrib libraries to be loaded in the
-call to slime-setup.
+- Binding data should be indented four spaces when starting on a new line;
+  otherwise it should align with the first binding-data form.
+- Binding-form bodies should be indented two spaces when starting on a new line;
+  otherwise they should align with the first body form.
+- Function arguments should align with the function name when the first argument
+  is on a new line; otherwise they should align with the first argument.
+- Special parameters in declarations (`&key`, `&optional`, etc.) should align with
+  the special-parameter declaration when starting on a new line, or with its first
+  parameter otherwise.
+- Prefer all function parameters on one line if they fit, or one per line.
+- `loop` keywords and their arguments should be indented two spaces when the first
+  argument starts on a new line, or align with the first argument otherwise.
 
-Ideally, use the default indentation settings provided by SLIME. If necessary,
-customize indentation parameters to maintain a consistent indentation style
-throughout an existing project. Parameters can be customized using
-the :variables setting in define-common-lisp-style. Indentation of specific
-forms can be customized using the :indentation setting of
-define-common-lisp-style. This is particularly useful when creating forms that
-behave like macros or special operators that are indented differently than
-standard function calls (e.g. defun, labels, or let). Add a
-[hook](https://www.gnu.org/software/emacs/manual/html_node/emacs/Hooks.html) to
-'lisp-mode-hook that calls common-lisp-set-style to set the appropriate style
-automatically.
+Prefer SLIME's default `cl-indent` indentation (`slime-indentation` in
+`slime-setup`). When necessary for consistency in an existing project, customize
+`define-common-lisp-style` via `:variables` and `:indentation` (particularly for
+macros with non-function syntax), and use `common-lisp-set-style` from a
+`lisp-mode-hook`. See [SLIME contrib loading](https://www.common-lisp.net/project/slime/doc/html/Loading-Contribs.html).
 
-Use indentation to make complex function applications easier to read. When an
-application does not fit on one line or the function takes many arguments,
-consider inserting newlines between the arguments so that each one is on a
-separate line. However, do not insert newlines in a way that makes it hard to
-tell how many arguments the function takes or where an argument form starts and
-ends.
+Break complex calls between arguments so their number and boundaries stay clear.
 
-**Incorrect example:**
+**Incorrect:**
 
 ```lisp
-;; Ow, my eyes!
 (do-something first-argument second-argument (lambda (x)
   (frob x)) fourth-argument last-argument)
 ```
 
-
-**Correct example:**
+**Correct:**
 
 ```lisp
-;; This looks nicer.
 (do-something first-argument
               second-argument
               (lambda (x) (frob x))
               fourth-argument
               last-argument)
-```
 
-
-The convention is that the body of a binding form is indented two spaces after
-the form. Any binding data before the body is usually indented four spaces.
-Arguments to a function call are aligned with the first argument; if the first
-argument is on its own line, it is aligned with the function name.
-
-**Correct example:**
-
-```lisp
 (multiple-value-bind (a b c d)
     (function-returning-four-values x y)
   (declare (ignore c))
@@ -176,32 +106,13 @@ argument is on its own line, it is aligned with the function name.
   (also-using b d))
 ```
 
-
-You must set your editor to avoid inserting tab characters in the files you
-edit. Tabs cause confusion when editors disagree on how many spaces they
-represent. In Emacs, do `(setq-default indent-tabs-mode nil)`.
-
 #### File Header
 
--   Begin each source file with a brief description of the contents of that
-    file.
--   Follow that description with an `in-package` declaration.
--   Avoid `(declaim (optimize ...))` declarations at the file level. Where
-    needed, include it after the `in-package` declaration.
-
-Every source file should begin with a brief description of the contents of that
-file.
-
-After that description, every file should start the code itself with an
-`(in-package #:package-name)` form.
-
-After that `in-package` form, every file should follow with any file-specific
-`(declaim (optimize ...))` declaration that is not covered by an `ASDF`
-`:around-compile` hook. Note that file-level `(declaim (optimize ...))`
-declarations should be avoided in favor of declarations with smaller scope when
-possible.
-
-**Correct example:**
+Begin every source file with a brief contents description. Its first code form
+should be `(in-package #:package-name)`. Avoid file-level
+`(declaim (optimize ...))` in favor of smaller scopes; any file-specific
+optimization declaration not covered by an ASDF `:around-compile` hook belongs
+after `in-package`.
 
 ```lisp
 ;;;; Variable length encoding for integers and floating point numbers.
@@ -210,186 +121,81 @@ possible.
 (declaim #.*optimize-default*)
 ```
 
-
-You should not include authorship information at the top of a file: better
-information is available from version control, and such a mention will only
-cause confusion and grief. Indeed, whoever was the main author at the time such
-a mention was included might not be who eventually made the most significant
-contributions to the file, and even less who is responsible for the file at the
-moment.
-
-You should not include copyright information in individual source code files. An
-exception is made for files meant to be disseminated as standalone.
+You should not put authorship information at the top: version control gives
+better information. You should not put copyright information in individual source files,
+**except** files intended for standalone dissemination.
 
 #### Vertical white space
 
--   Include one blank line between all top-level forms
-    -   This may be omitted for simple (one-line), closely related forms.
+Put one blank line between top-level forms. It may be omitted between simple,
+one-line, closely related definitions of the same kind, such as related
+constants or type declarations.
 
-You should include one blank line between top-level forms, such as function
-definitions. Exceptionally, blank lines can be omitted between simple, closely
-related defining forms of the same kind, such as a group of related type
-declarations or constant definitions.
-
-**Correct example:**
-
-```lisp
-(defconstant +mix32+ #x12b9b0a1 "pi, an arbitrary number")
-(defconstant +mix64+ #x2b992ddfa23249d6 "more digits of pi")
-
-(defconstant +golden-ratio32+ #x9e3779b9 "the golden ratio")
-(defconstant +golden-ratio64+ #xe08c1d668b756f82 "more digits of the golden ratio")
-
-(defmacro incf32 (x y)
-  "Like INCF, but for integers modulo 2**32"
-  `(setf ,x (logand (+ ,x ,y) #xffffffff)))
-(defmacro incf64 (x y)
-  "Like INCF, but for integers modulo 2**64"
-  `(setf ,x (logand (+ ,x ,y) #xffffffffffffffff)))
-```
-
-
-Blank lines can be used to separate parts of a complicated function. Generally,
-however, you should break a large function into smaller ones instead of trying
-to make it more readable by adding vertical space. If you can't, you should
-document with a `;;` comment what each of the separated parts of the function
-does.
+Blank lines may separate parts of a complex function, but prefer splitting it
+into smaller functions. If that is not possible, explain each separated part
+with a `;;` comment.
 
 #### Horizontal white space
 
--   Don't insert spaces after an opening parenthesis or before a closing
-    parenthesis.
--   Insert a single space between function and macro parameters.
--   Don't use whitespace to horizontally align forms.
--   Don't have dangling parentheses except when closing a top-level `eval-when`
-    form.
+- **Do not** put whitespace immediately after `(` or before `)`.
+- Use one space between forms, including function and macro parameters.
+- **Do not** put consecutive trailing parentheses on separate lines or leave
+  right parentheses alone on a line. The exception is a top-level `eval-when`
+  enclosing several definitions; add `; eval-when` after its lone closing paren.
+- Do not add spaces to align forms in the middle of consecutive lines, **except**
+  to emphasize an important symmetry that would otherwise be invisible.
+- **Do** align nested forms that span multiple lines.
 
-You must not include horizontal whitespace after an open parenthesis or before a
-close parenthesis.
-
-You must not place right parentheses by themselves on a line. A set of
-consecutive trailing parentheses must appear on the same line.
-
-**Incorrect example:**
+**Incorrect:**
 
 ```lisp
-;; These parentheses pull more attention, hurting readability. This also isn't
-;; conventional Lisp style.
-    ( defun factorial ( limit )
-      ( let (( product 1 ))
-        ( loop for i from 1 upto limit
-              do (setf product ( * product i ) ) )
-        product
-      )
-    )
-```
+( defun factorial ( limit )
+  ( let (( product 1 ))
+    ( loop for i from 1 upto limit
+          do (setf product ( * product i ) ) )
+    product
+  )
+)
 
-
-**Correct example:**
-
-```lisp
-;; This is easier to read, and avoids a hanging-braces style that is not
-;; conventionally used by Lisp programmers.
-(defun factorial (limit)
-  (let ((product 1))
-    (loop for i from 1 upto limit
-          do (setf product (* product i)))
-    product))
-```
-
-
-You should use only one space between forms.
-
-You should not use spaces to vertically align forms in the middle of consecutive
-lines. An exception is made when the code possesses an important yet otherwise
-not visible symmetry that you want to emphasize.
-
-**Incorrect example:**
-
-```lisp
-;; The cost of maintaining this sort of formatting and the inconsistent
-;; horizontal spacing outweighs the readability benefit of vertical alignment.
 (let* ((low    1)
        (high   2)
        (sum    (+ (* low low) (* high high))))
   ...)
 ```
 
-
-**Correct example:**
+**Correct:**
 
 ```lisp
-;; Consistent horizontal spacing is preferred.
+(defun factorial (limit)
+  (let ((product 1))
+    (loop for i from 1 upto limit
+          do (setf product (* product i)))
+    product))
+
 (let* ((low 1)
        (high 2)
        (sum (+ (* low low) (* high high))))
   ...)
-```
 
-
-You must align nested forms if they occur across more than one line.
-
-**Incorrect example:**
-
-```lisp
-;; Hard to visually grasp how deeply each form is nested.
-(defun munge (a b c)
-(* (+ a b)
-c))
-```
-
-
-**Correct example:**
-
-```lisp
-;; Indentation helps the reader parse the nesting of forms.
 (defun munge (a b c)
   (* (+ a b)
      c))
 ```
 
-
-An exception to the rule against lonely parentheses is made for an `eval-when`
-form around several definitions; in this case, include a comment `; eval-when`
-after the closing parenthesis.
-
 ### Documentation
 
 #### Docstrings
 
--   Use docstrings whenever the language permits it.
--   Use docstrings for all top-level functions, types, classes, variables, and
-    macros.
--   Document how to use a function, including its parameters, return values, and
-    side effects, not how the code works.
--   When a specialization of a generic breaks the contract specified in the
-    docstring, document that specialization. This must be avoided.
+Use documentation strings wherever the language permits, including top-level
+functions, types, classes, variables, and macros, unless painfully
+self-explanatory. Docstrings describe the API: how to use it, arguments, return
+values, side effects, conditions signaled, and pitfalls. Explain intended meaning
+at the appropriate abstraction level; implementation details and future work
+belong in comments.
 
-Unless some bit of code is painfully self-explanatory, document it with a
-documentation string (also known as docstring).
-
-Documentation strings are destined to be read by the programmers who use your
-code. They can be extracted from functions, types, classes, variables and
-macros, and displayed by programming tools, such as IDEs, or by REPL queries
-such as `(describe 'foo)`; web-based documentation or other reference works can
-be created based on them. Documentation strings are thus the perfect locus to
-document your API. They should describe how to use the code (including what
-pitfalls to avoid), as opposed to how the code works (and where more work is
-needed), which is what you'll put in comments.
-
-Supply a documentation string when defining top-level functions, types, classes,
-variables and macros. Generally, add a documentation string wherever the
-language allows.
-
-For functions, the docstring should describe the function's contract: what the
-function does, what the arguments mean, what values are returned, what
-conditions the function can signal. It should be expressed at the appropriate
-level of abstraction, explaining the intended meaning rather than, say, just the
-syntax. In documentation strings, use uppercase for the names of Lisp symbols,
-such as function arguments. For example, "The value of LENGTH must be an
-integer."
-
-**Correct example:**
+Use uppercase Lisp symbol names, including arguments, in docstrings. A long
+docstring may start with a one-sentence summary. Type names may use a backquote
+and closing apostrophe so Emacs highlights them and supports definition lookup.
 
 ```lisp
 (defun small-prime-number-p (n)
@@ -401,2120 +207,923 @@ integer."
     "Like clrhash, empties TABLE of all associations, and returns TABLE."))
 ```
 
-
-A long docstring may usefully begin with a short, single-sentence summary,
-followed by the larger body of the docstring.
-
-When the name of a type is used, the symbol may be quoted by surrounding it with
-a back quote at the beginning and a single quote at the end. Emacs will
-highlight the type, and the highlighting serves as a cue to the reader that M-.
-will lead to the symbol's definition.
-
-**Correct example:**
-
-```lisp
-(defun bag-tag-expected-itinerary (bag-tag)
-  "Return a list of `legacy-pnr-pax-segment' objects representing
-  the expected itinerary of the `bag-tag' object, BAG-TAG."
-  ...)
-```
-
-
-Every method of a generic function should be independently documented when the
-specialization affects what the method does, beyond what is described in its
-generic function's docstring.
+Each method whose specialization affects behavior beyond the generic's
+documentation should be independently documented. A specialization that breaks the generic's contract
+must be avoided; if one does, document that specialization.
 
 #### Non-Obvious Code
 
--   When making a non-obvious bug fix, add a comment explaining the reason for
-    the change and referencing the bug number.
--   When writing complicated code, add a comment explaining the need for the
-    complication and what the code is doing.
--   When additional work needs to be done with code, include a TODO.
--   Take special care to document any declaration and use of Domain-Specific
-    Languages (DSLs) in your code.
-
-When you fix a bug, consider whether what the fixed code does is obviously
-correct or not; if not, you must add a comment explaining the reason for the
-code in terms of fixing the bug. Adding the bug number, if any, is also
-recommended.
-
-Comments are explanations to the future maintainers of the code. Even if you're
-the only person who will ever see and touch the code, even if you're either
-immortal and never going to quit, or unconcerned with what happens after you
-leave (and have your code self-destruct in such an eventuality), you may find it
-useful to comment your code. Indeed, by the time you revisit your code, weeks,
-months or years later, you will find yourself a different person from the one
-who wrote it, and you will be grateful to that previous self for making the code
-readable.
-
-You must comment anything complicated so that the next developer can understand
-what's going on. (Again, the "hit by a truck" principle.)
-
-Also use comments as a way to guide those who read the code, so they know what
-to find where.
-
-For code that uses obscure forms to accomplish a task, you must include a
-comment stating the purpose of the form and the task it accomplishes.
-
-For comments requiring special attention, such as incomplete code, TODO items,
-questions, breakage, and danger, include a TODO comment indicating the type of
-problem, its nature, and any notes on how it may be addressed.
-
-Ideally a TODO comment should reference a bug number:
+- A non-obvious bug fix **must** have a comment explaining why the code is
+  necessary; reference the bug number if available (recommended).
+- **Comment complicated or obscure forms**, explaining the need for the
+  complication, the purpose, and what the code does. Comments should also guide
+  readers to the relevant parts of the code.
+- Use a TODO for incomplete work, questions, breakage, danger, or other matters
+  requiring attention. State the problem type, its nature, and possible remedies.
+  Ideally include a bug number; a username or email is also acceptable so readers
+  can find more information (usually use your own).
+- Be specific about dates/releases; use **YYYY-MM-DD** dates.
 
 ```lisp
 ;; TODO(b/1234567): use circular lists for fizzbuzz
-```
-
-
-However, it may also be a username or email address:
-
-```lisp
 ;; TODO(zippy@foo.com): Refactor to provide a better API.
+;; TODO(brown): Remove this code after release 1.7 or before 2012-11-30.
 ```
 
+Design DSLs to be readable by people familiar with the domain, and **document
+all DSLs properly**, both declarations and uses. For terse DSLs, explain each
+program unless its purpose is painfully obvious from context.
 
-The main purpose is to provide a way to find out more information by looking up
-the bug or the person. (Usually you should put your own username.)
-
-Be specific when indicating times or software releases in a TODO comment and use
-[YYYY-MM-DD](https://www.w3.org/TR/NOTE-datetime) format for dates to make
-automated processing of such dates easier:
-
-```lisp
-;;--- TODO(brown): Remove this code after release 1.7 or before 2012-11-30.
-```
-
-
-You should design your DSL to be easy to read and understand by people familiar
-with the domain.
-
-You must properly document all your DSL.
-
-Sometimes, your DSL is designed for terseness. In that case, it is important to
-document what each program does, if it's not painfully obvious from the context.
-
-Notably, when you use regular expressions (e.g. with the `CL-PPCRE` package),
-you MUST ALWAYS put in a comment (usually a two-semicolon comment on the
-previous line) explaining, at least basically, what the regular expression does,
-or what the purpose of using it is. The comment need not spell out every bit of
-the syntax, but it should be possible for someone to follow the logic of the
-code without actually parsing the regular expression.
+For regular expressions (e.g. CL-PPCRE), **always include a comment**, usually
+`;;` on the preceding line, explaining at least what the regex does or why it is
+used. Readers should be able to follow the logic without parsing the regex.
 
 #### Comment semicolons
 
--   Use three semicolons for top-level form comments.
--   Use two semicolons for comments inside top-level forms.
--   Use one semicolon for comments at the end of a line of code.
--   Include a space between the semicolons and text of the comment.
-
-You should use three semicolons to begin comments that apply to the file or the
-top-level forms.
-
-Inside a top-level form, you should use two semicolons to begin a comment if it
-appears between lines.
-
-You should use one semicolon if it is a parenthetical remark and occurs at the
-end of a line. You should use spaces to separate the comment from the code it
-refers to so the comment stands out. You should try to vertically align
-consecutive related end-of-line comments.
-
-**Correct example:**
+- `;;;` for file-level, section, or top-level-form comments.
+- `;;` for comments between lines inside a top-level form.
+- `;` for parenthetical end-of-line remarks. Separate these from code with
+  spaces; try to align consecutive related end-of-line comments vertically.
+- Include a space between the semicolons and the comment text.
 
 ```lisp
-;;; File-level comments or comments for large sections of code.
-
-;;; Divisibility
-;;; Comments that describe a group of definitions.
-
-(defun divisorp (d n)
-  (zerop (mod n d)))
-
-(defun proper-divisors (n)
-  ...)
-
-(defun divisors (n)
-  (cons n (proper-divisors n)))
-
 ;;; Prime numbers
-
 (defun small-prime-number-p (n)
-  (cond ((or (< n 2))
-         nil)
-        ((= n 2)   ; parenthetical remark here
-         t)        ; continuation of the remark
-        ((divisorp 2 n)
-         nil)  ; different remark
-        ;; Comment that applies to a section of code.
-        (t
-         (loop for i from 3 upto (sqrt n) by 2
-               never (divisorp i n)))))
+  (cond ((< n 2) nil)
+        ((= n 2) t) ; Special case
+        ;; Test the remaining divisors.
+        (t (loop for i from 3 upto (sqrt n) by 2
+                 never (divisorp i n)))))
 ```
-
-
-You should include a space between the semicolon and the text of the comment.
 
 ### Naming
 
 #### Symbol guidelines
 
--   Use all lowercase.
--   Use hyphens to separate words.
--   Follow the rules for
-    [punctuation, spelling, and grammar](#punctuation-spelling-and-grammar).
--   Name symbols based on their intent, not their content. Exceptions for common
-    suffixes, such as `-P` and `-V` may be made, but prefer other ways of
-    conveying type information (including declarations and type-specific
-    accessor functions) in most situations.
--   Function names, variable names, and filenames should be descriptive; eschew
-    abbreviation.
--   Variables with limited scope may be abbreviated freely.
+Use lowercase symbols with hyphens separating words and correct spelling. Common
+Lisp case-converts symbol names to uppercase; do not try to distinguish symbols
+by case. Do not escape characters to force lowercase **unless needed for
+third-party interoperability**.
 
-Use lower case for all symbols. Consistently using lower case makes searching
-for symbol names easier and is more readable.
+Do not substitute `/` or `.` for `-` **without a well-documented overarching
+reason and permission from the developers reviewing the proposal**. Follow
+[established punctuation conventions](https://www.cliki.net/Naming+conventions);
+do not use other symbol punctuation.
 
-Note that Common Lisp is case-converting, and that the `symbol-name` of your
-symbols will be upper case. Because of this case-converting, attempts to
-distinguish symbols by case are defeated, and only result in confusion. While it
-is possible to escape characters in symbols to force lower case, you should not
-use this capability unless this is somehow necessary to inter-operate with
-third-party software.
+Name symbols for their high-level **intent**, not their representation. Avoid
+embedding `list`, `array`, or `hash-table` in variable names unless implementing
+a generic algorithm for that representation. A variable representing a row can
+be `row` even if its abstract type is implemented by a string. Introduce abstract
+types (`defclass` or `deftype`) for new kinds of intent in protocols. Common
+suffixes such as `-p` or `-v` may be exceptions, but usually prefer declarations
+and type-specific accessors to convey types.
 
-Place hyphens between all the words in a symbol. If you can't easily say an
-identifier out loud, it is probably badly named.
+Use descriptive function, variable, and file names; do not sacrifice clarity to
+save space. Avoid ambiguous abbreviations in wide-scope symbols (`defvar`,
+`defun`, etc.); centrally document unfamiliar domain abbreviations. Limited-scope
+variables may be abbreviated freely. Keep names consistent across functions:
+pass `row` on as `row`, rather than renaming it `value`.
 
-You must not use `"/"` or `"."` instead of `"-"` unless you have a
-well-documented overarching reason to, and permission from other hackers who
-review your proposal.
+**Incorrect:** `*default-contextname*`, `*maximum-widget-cnt*`, `*nerr*`,
+`*n-comp-conns*`, `*wgc-connections*`, `*pc-reader*`, `*cstmr-id*`.
 
-**Incorrect example:**
-
-```lisp
-;; Bad
-(defvar *default-contextname* "main")  ; Words run together
-(defvar *maximum-widget-cnt* 200)      ; Abbreviation to save two characters
-```
-
-
-**Correct example:**
-
-```lisp
-;; Better
-(defvar *default-context-name* "main") ; Words separated by dashes
-(defvar *maximum-widget-count* 200)    ; Uses full words
-```
-
-
-There are [conventions](https://www.cliki.net/Naming+conventions) in Common Lisp
-for the use of punctuation in symbols. You should not use punctuation in symbols
-outside these conventions.
-
-Give as descriptive a name as possible, within reason. Do not worry about saving
-horizontal space as it is far more important to make your code immediately
-understandable by a new reader.
-
-Do not use abbreviations that are ambiguous for symbols with a wide scope; such
-as `defvar`s or `defun`s. For abbreviations that are unfamiliar to readers
-outside your project, domain-specific abbreviations, centrally document these
-abbreviations. For symbols of limited scope, such as those bound within a
-function, abbreviate freely.
-
-**Incorrect example:**
-
-```lisp
-(defvar *n*)               ; Meaningless.
-(defvar *nerr*)            ; Ambiguous abbreviation.
-(defvar *n-comp-conns*)    ; Ambiguous abbreviation.
-(defvar *wgc-connections*) ; Only your group knows what this stands for.
-(defvar *pc-reader*)       ; Lots of things can be abbreviated "pc".
-(defvar *cstmr-id*)        ; Deletes internal letters.
-```
-
-
-**Correct example:**
-
-```lisp
-(defvar *price-count-reader*)  ; No abbreviation.
-(defvar *num-errors*);         ; "num" is a widespread convention.
-(defvar *num-dns-connections*) ; Most people know what "DNS" stands for.
-```
-
-
-You should name a variable according to the high-level concept that it
-represents, not according to the low-level implementation details of how the
-concept is represented.
-
-Thus, you should avoid embedding data structure or aggregate type names, such as
-`list`, `array`, or `hash-table` inside variable names, unless you're writing a
-generic algorithm that applies to arbitrary lists, arrays, hash-tables, etc. In
-that case it's perfectly OK to name a variable `list` or `array`.
-
-Indeed, you should be introducing new abstract data types with `defclass` or
-`deftype`, whenever a new kind of intent appears for objects in your protocols.
-Functions that manipulate such objects generically may then use variables the
-name of which reflect that abstract type.
-
-For example, if a variable's value is always a row (or is either a row or
-`nil`), it's good to call it `row` or `first-row` or something like that. It is
-alright if `row` has been `deftype`'d to `string` — precisely because you have
-abstracted the detail away, and the remaining salient point is that it is a row.
-You should not name the variable `string` in this context, except possibly in
-low-level functions that specifically manipulate the innards of rows to provide
-the suitable abstraction.
-
-Be consistent. If a variable is named `row` in one function, and its value is
-being passed to a second function, then call it `row` rather than, say, `value`
-(this was a real case).
+**Correct:** `*default-context-name*`, `*maximum-widget-count*`,
+`*price-count-reader*`, `*num-errors*`, `*num-dns-connections*`.
 
 #### Global variables and constants
 
--   Global constants should start and end with a plus character.
--   Global variables should start and end with an asterisk character.
+Global constant names should start and end with plus characters (`+like-this+`);
+global variable names should start and end with asterisks (`*like-this*`, earmuffs),
+so dynamically bound globals do not collide with locals.
 
-The names of global constants should start and end with plus characters.
+Some projects use a leading, non-trailing `$` for parameters not normally
+modified/bound, but available for experiments or exceptional cases. Follow that
+convention consistently **only if the project already uses it**; otherwise avoid
+it.
 
-Global variable names should start and end with asterisks (also known in this
-context as earmuffs).
-
-In some projects, parameters that are not meant to be usually modified or bound
-under normal circumstances (but may be during experimentation or exceptional
-situations) should start (but do not end) with a dollar sign. If such a
-convention exists within your project, you should follow it consistently.
-Otherwise, you should avoid naming variables like this.
-
-Common Lisp does not have global lexical variables, so a naming convention is
-used to ensure that globals, which are dynamically bound, never have names that
-overlap with local variables. It is possible to fake global lexical variables
-with a differently named global variable and a `define-symbol-macro`. You should
-not use this trick, unless you first publish a library that abstracts it away.
-
-**Correct example:**
+You should not fake global lexical variables using another global plus
+`define-symbol-macro` **unless you first publish a library abstracting the trick**.
 
 ```lisp
 (defconstant +hash-results+ #xbd49d10d10cbee50)
 (defvar *maximum-search-depth* 100)
 ```
 
-
 #### Predicate names
 
--   For single-word predicate names, use a trailing `"p"`.
--   For multi-word predicate names, use a trailing `"-p"`.
-
-You should name functions returning a generalized-Boolean value with a trailing
-`"p"` or `"-p"`, to indicate that they are Boolean predicates. The value of
-`nil` means "false", while any other value means "true". The returned value
-should not have any other meaning beyond expressing the truth of the predicate.
-Generally, you should use `"p"` when the rest of the function name is one word
-and `"-p"` when it is more than one word.
-
-A rationale for this convention is given in
-[the CLtL2 chapter on predicates](https://www.cs.cmu.edu/Groups/AI/html/cltl/clm/node69.html).
-
-Functions that return meaningful values beyond the truth value, for example
-`cl:member`, should not be named with a `-p` or `p` suffix even if their return
-value can be used as a
-[generalized boolean](https://www.lispworks.com/documentation/HyperSpec/Body/26_glo_g.htm#generalized_boolean).
-
-The suggested convention for naming Boolean variables is to suffix their names
-equally with "-p" or "p" if there is no other convenient name that would express
-their Boolean type.
+For functions returning a generalized Boolean whose value has **no meaning beyond
+truth**, use a trailing `p` for single-word names, or `-p` for multiword names.
+`nil` is false; any other value is true. Do not use this suffix for functions
+with a meaningful non-Boolean result, such as `member`, even if usable as a
+Boolean. For Boolean variables, the same suffix is suggested when no other
+convenient name expresses their Boolean nature.
 
 #### Omit library prefixes
 
--   Don't include a library or package name as a prefix within the name of
-    symbols.
+Do not repeat a library/package name as a prefix within internal or external
+symbol names: prefer `varint:length64` to `varint:varint-length64`.
 
-When naming a symbol (external or internal) in a package, you should not include
-the package name as a prefix within the name of the symbol. Naming a symbol this
-way makes it awkward to use from a client package accessing the symbol by
-qualifying it with a package prefix, where the package name then appears twice
-(once as a package prefix, another time as a prefix within the symbol name).
+Exceptions:
 
-**Incorrect example:**
-
-```lisp
-(in-package #:varint)
-(defun varint-length64 () ... )
-
-(in-package #:client-code)
-(defconst +padding+ (varint:varint-length64 +end-token+))  ; varint is repeated
-```
-
-
-**Correct example:**
-
-```lisp
-(in-package #:varint)
-(defun length64 () ... )
-
-(in-package #:client-code)
-(defconst +padding+ (varint:length64 +end-token+))  ; reads nicely with package
-```
-
-
-An exception to the above rule is to include a prefix for the names of variables
-that would otherwise be expected to clash with variables in packages that use
-the current one. For instance, `ASDF` exports a variable `*asdf-verbose*` that
-controls the verbosity of `ASDF` only, rather than of the entire Lisp program.
-
-Symbols that correspond to standard, idiomatic Lisp expressions and would
-contain the package name or a part of it in a non-prefix position are still to
-be written with that package name or part. This includes the following idiomatic
-Lisp expressions as example:
-
-**Correct example:**
-
-```lisp
-;; Definition of the FOOBAR concept.
-(foobar:define-foobar ...)
-;; Iterate over elements of FOOBAR.
-(foobar:do-foobar ...)
-;; Establish a lexical scope dealing with some aspect of FOOBAR.
-(foobar:with-frobed-foobar ...)
-;; Constructors.
-(foobar:make-foobar ...)
-(foobar:new-foobar ...)
-```
-
+- Variables likely to clash in packages using this one may include a prefix,
+  e.g. ASDF's `*asdf-verbose*` affects ASDF, not the whole program.
+- Retain idiomatic concept names when they place the package name in a
+  **non-prefix** position: `foobar:define-foobar`, `foobar:do-foobar`,
+  `foobar:with-frobed-foobar`, `foobar:make-foobar`, `foobar:new-foobar`.
 
 #### Package names
 
--   Design package names to be usable as prefixes for symbols.
--   Usually, the last package name part will end up as an alias in other code.
+Choose consistent package names usable as symbol prefixes. For widely exposed
+packages, a good rule of thumb is `<org>.<library>.<unit>`, e.g.
+`acme.core.macro`. Separate hierarchy with dots and compound words with hyphens,
+e.g. `ace.container.hash-table`; use lowercase even for `http`.
 
-Follow consistent conventions when choosing a package name. For packages that
-are intended for wide use and may be exposed outside of your organization a good
-rule of thumb is to use `<org>.<library>.<unit>`. For example, for a package
-that contains generic utilities for writing macros found in the ACME company's
-"core" library, use `acme.core.macro`. The use of the dot (.) as a separator
-allows for tools to reason about hierarchical package structures and
-organization. If a component of the package name is a compound noun use a hyphen
-(-) to separate the words. For example, `ace.container.hash-table`. As with
-other Lisp names, use lowercase, even for well-known abbreviations like "http".
-
-Package prefixes should fit the names of the symbols those packages export. For
-example, if you have an abstraction called `fifo`, and it is in a package of the
-first type you'd have functions named things like `fifo-add-to` and
-`fifo-clear-all`. If you design a package name to be used as a prefix, you'd
-have names like `add-to` and `clear-all`, because the callers would be saying:
-
-**Correct example:**
-
-```lisp
-(fifo:add-to ...)
-(fifo:clear-all ...)
-```
-
-
-The below shows a redundant and arguably "ugly" symbol naming schema.
-
-**Incorrect example:**
-
-```lisp
-(fifo:fifo-clear-all ...)
-```
-
-
-Prefer singular names for packages rather than plural. For example calls to the
-function `ace.core.string:prefixp` will look like the following:
-
-**Correct example:**
-
-```lisp
-(string:prefixp ...)
-```
-
-
-The above reads better than:
-
-**Incorrect example:**
-
-```lisp
-(strings:prefixp ...)
-```
-
+The last component usually becomes an alias in client code. Design exported
+names to read well with it: `fifo:add-to`, `fifo:clear-all`, rather than
+`fifo:fifo-clear-all`. Prefer singular package names, e.g. `string:prefixp`
+rather than `strings:prefixp`. (Do not create global package nicknames; see
+[Packages](#packages).)
 
 #### File names
 
--   Use hyphens for names of Lisp and related sources.
--   Use the ".lisp" file name extension. Use "-ci.cc" for C stubs.
-
-The names of files should use hyphens (-) instead of underscores (\_).
-
-The file names and directory structure should match package names, as much as
-possible. When using a one package per file strategy, the part of a package name
-following the last dot (.) should be the file name that contains that package.
-e.g. the file ".../core/string.lisp" contains the package `ace.core.string`.
-
-Lisp file names should end with ".lisp".
-
-Source code files that contain C stubs for foreign function interface should end
-with the "-ci.cc" suffix.
+Use hyphens rather than underscores for Lisp and related source filenames.
+Match the package hierarchy as far as possible; with one package per file,
+`.../core/string.lisp` contains `ace.core.string`. Lisp sources end in `.lisp`;
+C FFI stubs end in `-ci.cc`.
 
 ### Code structure and organization
 
 #### Packages
 
--   Use packages, preferring one-package-per-file design.
+Use packages to define namespaces and external API symbols; prefer **one package
+per file**, with explicit dependencies in its definition and a hierarchical,
+non-cyclic dependency structure.
 
-Lisp packages are used to demarcate namespaces. Usually, each system has its own
-namespace. A package has a set of external symbols, which provide the interface
-for the package's facilities to be used elsewhere.
+You should never access another package's internal symbols using `::` in
+production code; fix the interface and export genuinely public symbols. Exceptions are unit tests
+of that package's internals, very temporary hacks, and REPL work. When API
+implementations/extenders need internals that normal users do not, expose those
+through a **second package** rather than exporting them from the normal API.
 
-The internal symbols of a package should never be referred to from other
-packages. That is, you should never have to use the double-colon `::` construct
-(e.g. `quake::hidden-function`). If you need to use double-colons to write real
-production code, something is wrong and needs to be fixed.
+Design new packages for **qualified use** (`time:now`) rather than `:use`, avoiding
+redundant exported names where possible. Necessary repetitions such as a
+`time:time` type are fine. Exceptions are internal implementation packages and
+well-known, widely used core packages; choose exported names accordingly.
 
-As an exception, unit tests may use the internals of the package being tested.
+For another package designed for unqualified use, prefer `:import-from` over
+`:use` to make dependencies explicit; `:use` may be preferable when importing
+many symbols.
 
-The `::` construct is also useful for very temporary hacks, and at the REPL. But
-if the symbol really is part of the externally-visible definition of the
-package, export it.
-
-At times it's necessary to expose some internals in order to allow for multiple
-implementations of an API. Rather than exporting those internal symbols, create
-a second package to export those symbols. The first package is for your normal
-users to use, and the second is for the implementation and its extenders to use.
-
--   Design packages to be used via a package qualifier, not via `:use`.
-
-If you add a new library package, e.g. `time`, it should be designed to be used
-via a package prefix, `time:`, rather than by adding `:use time` to the using
-package definitions. Correspondingly, try to avoid exporting symbols that repeat
-the package name when possible. (`time:now` vs `time:current-time`.) Of course
-avoiding all repetition isn't possible. For example, you might export a
-`time:time` type and that's fine.
-
-An exception can be made for internal implementation packages and for "core"
-packages that are well-known and widely used. The choice of the type of package
-will determine the names of most of the external symbols in that package.
-
--   Prefer `:import-from` over `:use`.
-
-When defining a package and accessing symbols from another package that was
-designed to be used without a package prefix, prefer the `:import-from`
-directive over the `:use` directive. `:import-from` makes the dependencies more
-explicit. However, if *many* symbols are being imported then `:use` may be
-preferable.
-
--   Do not use package nicknames.
-
-Package nicknames MUST NOT be used. Package nicknames tend to be a shorter
-version of the long package name, usually abbreviated as an acronym.
-
-**Incorrect example:**
+Package nicknames **MUST NOT** be used: they pollute the global package namespace
+and allow inconsistent naming by different users.
 
 ```lisp
+;; Incorrect: global nicknames
 (defpackage :regression-test
   (:nicknames :rtest #-foo :rt))
 ```
 
+Your package **must not shadow Common Lisp (`common-lisp`/`cl`) symbols**, except
+in extremely rare, well-justified cases:
 
-This practice pollutes the universal space of Lisp package names and most likely
-will be the source of name conflicts. Also, different users may choose to use
-different nicknames throughout their code, thus reducing readability and the
-ability to process the code with automatic tools that are agnostic to Lisp
-package naming schemes.
-
--   Favor the one package per file design principle, instead of sharing a
-    package across multiple files in a library.
-
-    -   It reduces the number of concepts that need to be reasoned about when
-        organizing the code. A file, package, namespace, unit ... all have a one
-        to one correspondence.
-    -   It directly documents the structure of the file/unit/package with
-        explicit dependencies in the package definition. This is beneficial for
-        the human readers and for automatic tools that can easily derive system
-        and build information from the dependencies.
-    -   It enforces a hierarchical, non-cyclic dependency between units of code.
-        It is difficult to load and compile two such files with defined packages
-        if they depend on each other in a circular fashion. This improves the
-        software architecture and design.
-
--   Do not shadow `common-lisp` symbols.
-
-Your package must not shadow (and thus effectively redefine) symbols that are
-part of the Common Lisp language. That is, symbols in the `common-lisp`
-(nickname `cl`) package. There are certain exceptions, but they should be very
-well-justified and extremely rare:
-
--   If you are explicitly replacing a Common Lisp symbol by a safer or more
-    fully featured version.
--   If you are defining a package not meant to be "used", and have a good reason
-    to export a symbol that clashes with Common Lisp, such as `log:error` and
-    `log:warn` and so on.
+- Explicitly replacing a standard symbol with a safer or more capable version.
+- Exporting a justified conflicting name from a package not intended for `:use`,
+  such as `log:error` or `log:warn`.
 
 #### CLOS
 
--   New uses of CLOS are disallowed; new print-object methods are allowed
+**New uses of CLOS are disallowed; new `print-object` methods are allowed.**
+This is the upstream guide's rule.
 
 ### Language usage guidelines
 
 #### Mostly Functional Style
 
--   Use side-effects only when they result in better/clearer code:
-
-Lisp is best used as a "mostly functional" language.
-
-Avoid modifying local variables, try rebinding instead.
-
-Avoid creating objects and then SETFing their slots. Prefer to set the slots
-during initialization.
-
-Make classes as immutable as possible, that is, avoid giving slots setter
-functions if at all possible. (The slots can still be set via `with-slots`.)
-
-Using a mostly functional style makes it much easier to write concurrent code
-that is thread-safe. It also makes it easier to test the code. It often makes it
-easier to reason about the code, because keeping track of program state in your
-head is hard.
+Use side effects only when they improve clarity/code. Prefer rebinding local
+variables to modifying them, initialize slots when creating objects rather than
+creating and then `setf`ing them, and make classes as immutable as possible.
+Avoid slot setters where possible (slots remain accessible through `with-slots`).
 
 #### Special variables
 
--   Use
-    [special variables](https://www.lispworks.com/documentation/HyperSpec/Body/d_specia.htm#special)
-    (such as those defined by
-    [`defvar`](https://www.lispworks.com/documentation/HyperSpec/Body/m_defpar.htm#defvar))
-    sparingly.
+Use special/dynamically bound variables **sparingly**, only where unsurprising
+and significantly beneficial. Each adds hidden state and interactions that
+readers, tests, isolation, and backtraces must account for. Natural candidates
+are “the current” database connection, data source, or request shared through a
+processing chain, where explicit argument plumbing adds little clarity.
 
-Use special (dynamically bound) variables sparingly, and only in cases where it
-won't surprise the person reading the code, and where it offers significant
-benefits.
-
-Indeed, each special variable constitutes state. Developers have to mentally
-track the state of all relevant variables when trying to understand what the
-code does and how it does it; tests have to be written and run with all relevant
-combinations; to isolate some activity, care has to be taken to locally bind all
-relevant variables, including those of indirectly used modules. They can hide
-precious information from being printed in a backtrace. Not only is there
-overhead associated with each new variable, but interactions between variables
-can make the code exponentially more complex as the number of such variables
-increases. The benefits have to match the costs.
-
-Note though that a special variable is not a global variable in the sense of a
-global variable in, say, BASIC or C. As special variables can be dynamically
-bound to a local value, they are much more powerful than global value cells
-where all users necessarily interfere with each other.
-
-Good candidates for such special variables are items for which "the current" can
-be naturally used as prefix, such as "the current database connection" or "the
-current business data source". They are singletons as far as the rest of the
-code is concerned, and often passing them as an explicit argument does not add
-anything to the readability or maintainability of the source code in question.
-
-They can make it easier to write code that can be refactored. If you have a
-request processing chain, with a number of layers that all operate upon a
-"current" request, passing the request object explicitly to every function
-requires that every function in the chain have a request argument. Factoring out
-code into new functions often requires that these functions also have this
-argument, which clutters the code with boilerplate.
-
-Treat special variables as though they are per-thread variables. Do not provide
-a default top-level binding unless there is a default value that is valid for
-all threads. Each thread of control that needs the variable should bind it
-explicitly. With this, any incorrect use of the variable will result in an
-"unbound variable" error, and each thread will see its own value for the
-variable. Variables with a default global value should usually be locally
-re-bound at thread creation time.
+Treat specials as **per-thread** variables. Do not provide a default top-level
+binding unless it is valid for **all** threads. Each thread needing the variable
+should bind it explicitly so misuse is an unbound-variable error. Variables
+with a default global value should usually be locally rebound at thread creation.
 
 #### Assignment
 
--   Within a package, be consistent with package-level assignment forms.
-
-There are several styles for dealing with assignment and side-effects; whichever
-a given package is using, keep using the same consistently when hacking said
-package. Pick a style that makes sense when starting a new package.
-
-Regarding multiple assignment in a single form, there are two schools: the first
-style groups as many assignments as possible into a single `setf` or `psetf`
-form thus minimizing the number of forms with side-effects:
-
-**Correct example:**
+Keep assignment conventions consistent within each package; choose a sensible
+convention for a new one. Existing packages may group assignments in one
+`setf`/`psetf`, or split them into separate forms; follow that package. For new
+packages, prefer grouping:
 
 ```lisp
 (setf foo bar
       baz quux)
 ```
 
-
-the second style splits assignments into as many individual `setf` (or `setq`,
-see below) forms as possible, to maximize the chances of locating forms that
-modify a kind of place by grepping for `(setf (foo ...`:
-
-```lisp
-(setf foo bar)
-(setf baz quux)
-```
-
-
-A grep pattern must actually contain as many place-modifying forms as you may
-use in your programs, which may make this rationale either convincing or moot
-depending on the rest of the style of your code. Follow the convention used in
-the package you are hacking. We recommend the first convention for new packages.
-
-Regarding `setf` and `setq`, there are two schools: the first regards `setq` as
-an archaic implementation detail, and avoids it entirely in favor of `setf`; the
-second regards `setf` as an additional layer of complexity, and avoids it in
-favor of `setq` whenever possible (i.e. whenever the assigned place is a
-variable or symbol-macro). Follow the convention used in the package you are
-hacking. We recommend the first convention for new packages.
-
-In the spirit of a mostly pure functional style, which makes testing and
-maintenance easier, we invite you to consider how to do things with the fewest
-assignments.
+Likewise follow the package's preference between `setf` everywhere and `setq`
+where the place is a variable/symbol-macro. Prefer **`setf`** for new packages.
+Consider solutions with fewer assignments in keeping with mostly functional style.
 
 #### Assertions and Conditions
 
-Use `assert`, `check-type`, and `etypecase` to detect internal bugs only, and
-use them liberally.
+Use `assert`, `check-type`, and `etypecase` liberally to detect **internal bugs
+only**. Assert invariants whose failure means broken software; invalid external
+input must instead receive proper runtime handling. Prefer `etypecase` to
+`typecase`, and `check-type` to type declarations for function inputs. Do not use
+`assert` data/argument forms to select a condition type; debugging messages in
+those forms are fine.
 
--   Prefer `etypecase` over `typecase`
--   Use `error` to check input from a file.
--   If a function signals an error, document it in its contract.
--   Prefer `log`ging a warning to using `warn`.
--   Never call `signal` directly, use `error` instead.
--   Prefer using `handler-bind` to `restart`.
--   Prefer using `restart` to `throw` and `catch`.
--   Avoid generically handling conditions:
-    -   Errors not related to the current code should propagate through.
-    -   Avoid generically handling `serious-condition`.
--   Never signal conditions within the clean-up of an `unwind-protect`.
--   Never clean up by resignaling.
--   Never return a condition or error value, signal it with ERROR instead.
+Validate input such as file contents and use application-specific **`error`**
+conditions for bad data, requests, permissions, or unusual outcomes. Production
+`error` calls **must specify a condition type**, never just a string, to support
+internationalization. Use `(error 'foo-error ...)`, not the longer equivalent
+`(error (make-condition 'foo-error ...))`.
 
-Use `assert` to detect internal bugs ONLY. Code should `assert` invariants whose
-failure indicates that the software is itself broken. Incorrect input should be
-handled properly at runtime, and must not cause an assertion violation. The
-audience for an `assert` failure is a developer. Do not use the data-form and
-argument-form in `assert` to specify a condition to signal. It's fine to use
-them to print out a message for debugging purposes (and since it's only for
-debugging, there's no issue of internationalization).
+A function that signals conditions should document that behavior in its contract,
+which should clearly name the condition classes; subclasses are permitted.
+Signaling an undocumented condition is a bug. Never return a
+condition object among multiple values, or encode an unusual outcome in a
+special return type; signal it with `error`.
 
-`check-type`, `etypecase` are also forms of assertion. When one of these fails,
-that's a detected bug. Prefer `check-type` over `(declare (type ...))` for the
-inputs of functions.
+- Prefer logging a warning to `warn`.
+- **Never call `signal` directly**; use `error`.
+- Do not use `throw`/`catch` when restarts suffice, or restarts when
+  `handler-bind` suffices.
+- Do not handle all conditions (`t`) or use `ignore-errors`; let unrelated and
+  unknown conditions propagate. In the rare justified case of handling “all”
+  conditions, handle **only `error`**, never `t` or `serious-condition`.
+- **Never signal a condition or exit nonlocally out of a cleanup handler**, e.g.
+  via `invoke-restart` from an `unwind-protect` cleanup.
+- **Never clean up by resignaling**; it hides the original stack trace. Use
+  `unwind-protect` so the original error propagates.
 
-Invalid input, such as files that are read but do not conform to the expected
-format, should not be treated as assertion violations. Always check to make sure
-that input is valid, and take appropriate action if it is not, such as signaling
-an application specific error.
-
-Use `error` to signal problems with user data, requests, permissions, etc., or
-to report "unusual outcomes" to the caller.
-
-Always call `error` with an explicit condition type; it should never simply be
-called with a string in production code. This enables internationalization.
-
-Functions that report unusual outcomes by signaling a condition should say so
-explicitly in their contracts (their textual descriptions, in documentation and
-docstrings etc.). When a function signals a condition that is not specified by
-its contract, that's a bug. The contract should specify the condition class(es)
-clearly. The function may then signal any condition that is a type-of any of
-those conditions. That is, signaling instances of subclasses of the documented
-condition classes is fine.
-
-Code must not call `signal`. Use `error` instead.
-
-Do not use `throw` and `catch` when the `restart` facility could be used
-instead.
-
-Do not use `restart` when `handler-bind` could be used instead.
-
-Do not generically handle all conditions, e.g. type `t`, or use `ignore-errors`.
-Instead, let unknown conditions propagate to the standard ultimate handler for
-processing.
-
-There are a few places where handling all conditions is appropriate, but they
-are rare. The problem is that handling all conditions can mask program bugs. If
-you need to handle "all conditions", you MUST handle only `error`, *not* `t` and
-not `serious-condition`.
-
-`(error (make-condition 'foo-error ...))` is equivalent to
-`(error 'foo-error ...)` — code must use the shorter form.
-
-Do not signal conditions from inside the cleanup form of `unwind-protect` or
-otherwise exit non-locally from cleanup handlers outside of the handler e.g.
-`invoke-restart`.
-
-Do not clean up by resignaling. If you do that, and the condition is not
-handled, the stack trace will halt at the point of the resignal, hiding the
-rest. And the rest is the part we really care about!
-
-**Incorrect example:**
+**Incorrect:**
 
 ```lisp
 (handler-case
-  (catch 'ticket-at
-    (etd-process-blocks))
+    (etd-process-blocks)
   (error (c)
     (reset-parser-values)
-      (error c)))  ; The origin of this error has been lost.
+    (error c))) ; Hides the original error site
 ```
 
-
-**Correct example:**
+**Correct:**
 
 ```lisp
 (unwind-protect
-  (catch 'ticket-at
-    (etd-process-blocks))
-  (reset-parser-values))  ; The error passes through but cleanup still happens
+    (etd-process-blocks)
+  (reset-parser-values))
 ```
-
-
-Do not return a condition object as one of a set of multiple values. Instead,
-signal the condition to denote an unusual outcome.
-
-Signal a condition to denote an unusual outcome, rather than relying on a
-special return type.
 
 #### Type Checking and Declarations
 
--   Use `(declare (type ...))`:
-    -   For the contracts of non-API functions only, and
-    -   To perform optimization on low-level internal functions.
--   Use `check-type`:
-    -   On special variables used as implicit arguments,
-    -   On the contracts of API functions, and
-    -   Where it may be useful in detecting input bugs.
+Use `check-type` on API contracts, special variables acting as implicit
+arguments, and where it helps detect input bugs. Checking an implicit special
+also tells readers the function uses it as an argument.
 
-If your function is using a special variable as an implicit argument, it's good
-to put in a `check-type` for the special variable, for two reasons: to clue in
-the person reading the code that this variable is being used implicitly as an
-argument, and also to help detect bugs.
-
-Using `(declare (type ...))` is the least-desirable mechanism to use because, as
-Scott McKay puts it:
-
-> The fact is, `(declare (type ...))` does different things depending on the
-> compiler settings of speed, safety, etc. In some compilers, when speed is
-> greater than safety, `(declare (type ...))` will tell the compiler "please
-> assume that these variables have these types" *without* generating any
-> type-checks. That is, if some variable has the value `1432` in it, and you
-> declare it to be of type `string`, the compiler might just go ahead and use it
-> as though it's a string.
->
-> Moral: don't use `(declare (type ...))` to declare the contract of any API
-> functions, it's not the right thing. Sure, use it for "helper" functions, but
-> not API functions.
-
-Use appropriate declarations in internal low-level functions where these
-declarations are used for optimization. When you do, however, see our
-recommendations for
+Use `(declare (type ...))` for **non-API helper contracts only**, and for
+optimization in internal low-level functions. Declarations can tell a compiler
+to **assume** a type without checking, depending on speed/safety settings, so do
+not use them to declare API contracts. For optimization, follow
 [Unsafe Operations](#unsafe-operations).
 
 ### Meta-language guidelines
 
 #### Macros
 
--   Use macros to clearly express a repeated pattern.
--   Don't write a macro when a (possibly inlined) function would do.
--   Avoid writing overly complicated macros:
-    -   Macro forms should only process syntax.
-    -   Minimize macroexpanded code, delegating logic to an implementation
-        function where appropriate (*call-with style*)
--   Macros should generally be hygienic, binding only symbols provided by the
-    caller or generated by `gensym`.
--   Clearly document unhygienic aspects and side-effects of macros.
--   Only evaluate parameters to a macro once.
--   For macros with a `body` form, even if they have no parameters, include an
-    empty `()` to allow for future enhancement without breaking callers.
--   Don't use regular macros to improve performance, use inlining.
--   Use compiler macros to improve performance as needed.
--   Avoid macros that define other macros. If you must use them, document
-    carefully.
--   Obtain developer consensus before writing a reader macro.
--   Never let a reader macro leak out of the system using it.
+Use macros to express repeated patterns clearly, reusing existing macros where
+possible. **Never use a macro when a (possibly inline) function suffices**;
+use `flet`/`labels` rather than `macrolet` when possible. Complex macros need an
+expressiveness benefit that justifies their cost.
 
-Macros make your code clearer by providing syntactic abstraction. However, this
-comes at a price in syntactic complexity, and macroexpanded forms are not as
-easy to unit-test and debug as functions.
+Macros should only process syntax. Minimize expanded code and move logic to
+(possibly inline) implementation functions in **call-with style**: splice `&body`
+forms into a lambda passed to the helper. The helper's name should prefix the outer name with `%`, e.g.
+`foo` delegates to `%foo`.
 
-Never use a macro where a function will do. That is, if the semantics of what
-you are writing conforms to the semantics of a function, write it as a function
-rather than a macro. This advice also applies to local macros defined with
-`macrolet`; use `flet` or `labels` instead where possible.
+Macros should generally be hygienic: bind caller-provided symbols or fresh
+`gensym`s. Give `gensym` a readable string name; `alexandria:with-gensyms` is
+convenient. **Clearly document** bindings of other symbols (including globals)
+while caller code executes, and side effects in expansion forms not supplied by
+the caller.
 
-Reuse existing macros where possible. Only write complex macros when the gain in
-expressiveness justifies the effort.
+A supplied form should be **expanded once** and evaluated only as many times as
+the caller expects (normally once for an argument). `alexandria:once-only` or
+call-with style can enforce this. Do not duplicate `&body` forms. If several
+branches need the same form, it can be placed in a local function called by each
+branch. That function should have a unique gensym name with `flet` and should be
+declared `dynamic-extent` if applicable.
 
-Complex macros should use
-[*call-with style*](http://random-state.net/log/3390120648.html), where as much
-logic as possible is delegated to a (possibly declared inline) auxiliary
-function. Macro `&body` arguments are typically spliced into the body of a
-lambda expression passed to the auxiliary function. Implementation function
-names should follow the convention of prefixing the outer name with `%`. e.g. a
-macro `foo` could pass a body lambda and other parameters to the function
-`%foo`.
+Leave an argument list before the body even for parameterless body macros, to
+allow future optional/keyword arguments without breaking calls:
 
-Symbols bound by a macro should generally either be provided by the caller or
-generated with `gensym`. Since `gensym` generates fresh symbols, those symbols
-can't appear in other forms passed by the caller. This prevents symbols from
-being unexpectedly shadowed when the macroexpanded code is executed
-([*variable capture*](https://www.bookshelf.jp/texi/onlisp/onlisp_10.html)); a
-macro that upholds this property is referred to as *hygienic*. Pass a string as
-the optional parameter for `gensym` to provide the generated symbol a
-human-readable name. The `alexandria:with-gensyms` macro provides a convenient
-way to generate such symbols.
-
-If a macro must bind other symbols (e.g. global variables) during the execution
-of caller-provided forms, that aspect of its interface must be clearly
-documented. Side effects of forms in a macroexpansion that are not passed by the
-caller should also be clearly documented.
-
-If a macro call contains a form to be used in the macroexpanded code, that form
-should be expanded only once, and evaluated only the number of times that would
-be expected by the caller. Expanding code more than once (especially `&body`
-forms) results in less readable macroexpansions and larger binary sizes.
-`alexandria:once-only` provides a convenient way to evaluate a user-provided
-form and bind it to a freshly-generated symbol. Using `call-with` style makes it
-easier to uphold this property, since forms can be evaluated once in the call to
-the auxiliary function.
-
-If a form needs to be evaluated in multiple branches of the macroexpanded code,
-it can be spliced into a local function definition instead, with each branch
-calling that function. In that case, the local function should be given a unique
-gensym name with `flet` and declared dynamic-extent (if applicable).
-
-When you write a macro with a body, such as a `with-xxx` macro, even if there
-aren't any parameters, you should leave space for them anyway. For example, if
-you define `with-lights-on`, do not structure it like this:
-
-**Incorrect example:**
+**Incorrect:**
 
 ```lisp
-(defmacro with-lights-on (&body b)
-  ...)
-
-;; Example call
-(with-lights-on
-  ...)
+(defmacro with-lights-on (&body b) ...)
+(with-lights-on ...)
 ```
 
-
-Instead, add an empty arguments list before the body argument:
-
-**Correct example:**
+**Correct:**
 
 ```lisp
-;; Macro lambda list has empty parens before body argument
-(defmacro with-lights-on (() &body b)
-  ...)
-
-;; Call has empty arguments list before body forms
-(with-lights-on ()
-  ...)
+(defmacro with-lights-on (() &body b) ...)
+(with-lights-on () ...)
+;; A later version can accept keyword parameters in that same list.
 ```
 
+**Do not replace a function with a regular macro for performance.** If profiling
+justifies inlining, document the need/results and use
+`(declaim (inline function-name))`. Compiler macros may provide performance
+transformations, but can interfere with tracing the optimized function.
 
-That way, you can later add optional or keyword parameters without having to
-change all the uses of the macro:
-
-**Correct example:**
-
-```lisp
-(defmacro with-lights-on ((&keyword install-new-bulbs-p) &body b)
-  ...)
-
-;; Calls that don't use the optional parameter don't need update
-(with-lights-on ()
-  ...)
-
-;; Other calls can use the new parameter
-(with-lights-on (:install-new-bulbs-p t)
-  ...)
-```
-
-
-You must not transform a function into a macro for performance reasons. If
-profiling shows that you have a performance problem with code being part of a
-function body instead of expanded inline, document the need and profiling
-results appropriately, and `(declaim (inline <function-name>))`.
-
-You can also use a compiler-macro as a way to speed up function execution by
-specifying a source-to-source transformation. Beware that it interferes with
-tracing the optimized function.
-
-When you write a macro-defining macro (a macro that generates macros), document
-and comment it particularly clearly, since these are harder to understand.
-
-You must not install new reader macros without a consensus among the developers
-of your system. Reader macros must not leak out of the system that uses them to
-clients of that system or other systems used in the same project. You must use
-software such as `cl-syntax` or `named-readtables` to control how reader macros
-are used. Clients should be able to choose whether or not to use the same reader
-macros as you do: your system must be usable even to clients who do not use
-these reader macros.
+Avoid macro-defining macros; if necessary, document and comment them especially
+clearly. **Do not install reader macros without developer consensus**. Use
+`cl-syntax`, `named-readtables`, or similar controls; reader macros **must not
+leak** into clients or other systems. Clients must be able to use your system
+without adopting its reader macros.
 
 #### Read-time evaluation
 
--   Avoid using the `#.` reader macro:
-    -   Prefer using `eval-when` and `defconstant`.
--   Avoid read-time side-effects.
+**Do not use `#.` when another idiom works**: use `eval-when` for compile-time side effects,
+a macro for a compile-time expression, or `load-time-value` for load-time
+computation. You should consider naming the value with `defconstant` or a variant, possibly
+inside `eval-when`.
 
-The `#.` standard read-macro will read one object, evaluate the object, and have
-the reader return the resulting value.
-
-You must not use it where other idioms will do, such as using `eval-when` to
-evaluate side-effects at compile-time, using a regular macro to return an
-expression computed at compile-time, using `load-time-value` to compute it at
-load-time.
-
-Read-time evaluation is often used as a quick way to get something evaluated at
-compile time (actually "read time" but it amounts to the same thing). If you use
-this, the evaluation MUST NOT have any side effects and MUST NOT depend on any
-variable global state. The `#.` should be treated as a way to force
-"constant-folding" that a sufficiently-clever compiler could have figure out all
-by itself, when the compiler isn't sufficiently-clever and the difference
-matters.
-
-Another use of `#.` is to expand the equivalent of macros in places that are
-neither expressions nor (quasi)quotations, such as lambda-lists. However, if you
-find yourself using it a lot, it might be time to instead define macros to
-replace your consumers of lambda-lists with something that recognizes an
-extension.
-
-Whenever you are going to use `#.`, you should consider using `defconstant` and
-its variants, possibly in an `eval-when`, to give the value a name explaining
-what it means.
+Any `#.` evaluation **MUST NOT have side effects or depend on variable global
+state**. Treat it as a way to force important constant folding the compiler
+cannot perform. Another use is macro-like expansion in places that are neither
+expressions nor (quasi)quotations, such as lambda lists; if frequent, consider
+macros that extend the consumers of that syntax instead.
 
 #### EVAL
 
--   Never use `eval` at runtime in production code.
+**Never use `eval` at runtime in production code.** Appropriate uses are rare;
+you must consult reviewers. Use `symbol-value` for a symbol's value; often a macro is the
+right solution. Do not use runtime `eval` to interpret even a supposedly safe
+language subset; write a special-purpose evaluator instead.
 
-Places where it is actually appropriate to use `eval` are so few and far between
-that you must consult with your reviewers; it's easily misused.
+Permitted contexts:
 
-If your code manipulates symbols at runtime and needs to get the value of a
-symbol, use `symbol-value`, not `eval`.
+- Interactive development tools.
+- Build infrastructure.
+- Testing-framework backdoors (**never in production**).
+- Macros folding constants at compile time.
+- Macros registering definitions in metadata, where registration must happen
+  both during compilation (for other macros) and in the expansion at load time.
 
-Often, what you really need is to write a macro, not to use `eval`.
-
-You may be tempted to use `eval` as a shortcut to evaluating expressions in a
-safe subset of the language. But it often requires more scrutiny to properly
-check and sanitize all possible inputs to such use of `eval` than to build a
-special-purpose evaluator. You must not use `eval` in this way at runtime.
-
-Places where it is OK to use `eval` are:
-
--   The implementation of an interactive development tool.
--   The build infrastructure.
--   Backdoors that are part of testing frameworks. (You MUST NOT have such
-    backdoors in production code.)
--   Macros that fold constants at compile-time.
--   Macros that register definitions to meta-data structures; the registration
-    form is sometimes evaluated at compile-time as well as included in the
-    macro-expansion, so it is immediately available to other macros.
-
-Note that in the latter case, if the macro isn't going to be used at the
-top-level, it might not be possible to make these definitions available as part
-of the expansion. The same phenomenon may happen in a `deftype` expansion, or in
-helper functions used by macros. In these cases, you may actually have to use
-`asdf-finalizers:eval-at-toplevel` in your macro. It will not only `EVAL` your
-definitions at macro-expansion time for immediate availability, it will also
-save the form aside, for inclusion in a `(asdf-finalizers:final-forms)` that you
-need to include at the end of the file being compiled (or before the form is
-needed). This way, the side-effects are present when loading the fasl without
-having compiled it as well as while compiling it; in either case, the form is
-made available at load-time. `asdf-finalizers` ensures that the form is present,
-by throwing an error if you omit it.
+In the last case, a non-top-level macro, `deftype` expansion, or macro helper may
+not be able to emit the needed top-level definitions. Use
+`asdf-finalizers:eval-at-toplevel` when needed: it evaluates immediately at
+expansion time and saves the form for `(asdf-finalizers:final-forms)`, which you
+**must include at the end of the compiled file, or before the form is needed**.
+That ensures registration also occurs when loading a fasl without compiling;
+ASDF-FINALIZERS reports an error if final forms are omitted.
 
 #### INTERN and UNINTERN
 
--   Never use `intern` or `unintern` at runtime.
+**Never use `intern` or `unintern` at runtime**, and do not dynamically intern
+new symbols. Interning can allocate permanent symbols, expose internals, leak
+memory, enable denial of service, and create clashes. Uninterning can break
+dynamic binding and debugging.
 
-You must not use `intern` at runtime. Not only does it cons, it either creates a
-permanent symbol that won't be collected or gives access to internal symbols.
-This creates opportunities for memory leaks, denial of service attacks,
-unauthorized access to internals, clashes with other symbols.
+Do not intern a string merely to compare it with a keyword; use `string=` or
+`string-equal` (`string-equal` accepts symbols via their `symbol-name`).
 
-You must not `intern` a string just to compare it to a keyword; use `string=` or
-`string-equal`.
+**Incorrect:** `(member (intern str :keyword) $keys)`.
 
-**Incorrect example:**
+**Correct:** `(member str $keys :test #'string-equal)`.
 
-```lisp
-(member (intern str :keyword) $keys)  ; intern has undesired side-effects
-```
-
-
-**Correct example:**
-
-```lisp
-  (member str $keys :test #'string-equal)
-;; Compares without interning
-```
-
-
-Note: string-equal uses the `symbol-name` for comparison when given a symbol.
-
-You must not use `unintern` at runtime. It can break code that relies on dynamic
-binding. It makes things harder to debug. You must not dynamically intern any
-new symbol, and therefore you need not dynamically unintern anything.
-
-You may of course use `intern` at compile-time, in the implementation of some
-macros. Even so, it is usually more appropriate to use abstractions on top of
-it, such as `alexandria:symbolicate` or `alexandria:format-symbol` to create the
-symbols you need.
+Compile-time interning in macros is allowed, but prefer abstractions such as
+`alexandria:symbolicate` or `alexandria:format-symbol`.
 
 ### Data Representation
 
 #### Using NIL
 
--   Use `nil` to represent false or an unspecified value that cannot be `nil`.
--   Use a symbol to represent the absence of a value or an unspecified value
-    that can be `nil`.
+Avoid ambiguous representations:
 
-`nil` can have several different interpretations:
+- False: use `nil`; test with `not` or `null`.
+- Empty list: use `nil`; test with `endp` for a known proper list, `null` otherwise.
+- Unspecified value: `nil` is allowed only if unambiguous everywhere; otherwise
+  use an explicit descriptive symbol/keyword.
+- A value known not to exist: use an explicit descriptive symbol rather than `nil`.
 
--   "False." In this case, use `nil`. You should test for false `nil` using the
-    operator `not` or using the predicate function `null`.
--   "Empty-list." In this case, use `nil`. You should use `endp` to test for the
-    empty list when the argument is known to be a proper list, or with `null`
-    otherwise.
--   A statement about some value being unspecified. In this case, you may use
-    `nil` if there is no risk of ambiguity anywhere in your code; otherwise you
-    should use an explicit, descriptive symbol.
--   A statement about some value being known not to exist. In this case, you
-    should use an explicit, descriptive symbol instead of `nil`.
-
-You must not introduce ambiguity in your data representations that will cause
-headaches for whoever has to debug code. If there is any risk of ambiguity, you
-should use an explicit, descriptive symbol or keyword for each case, instead of
-using `nil` for either. If you do use `nil`, you must make sure that the
-distinction is well documented.
-
-In many contexts, instead of representing "I don't know" as a particular value,
-you should instead use multiple values, one for the value that is known if any,
-and one to denote whether the value was known or found.
-
-When working with database classes, keep in mind that `nil` need not always map
-to `null` (and vice-versa)! The needs of the database may differ from the needs
-of the Lisp.
+**Do not introduce ambiguity**; if using `nil`, document the distinction well.
+Often a second return value indicating whether the primary value was known/found
+is better than an “unknown” sentinel. Database `null` and Lisp `nil` need not map
+to each other; choose representations for their respective needs.
 
 #### Lists
 
--   Use lists only for containers of elements of a like type.
--   Use lists only for sequential access.
--   Use lists for literal constants that will be transformed into data
-    structures at compile- or load-time.
--   Prefer proper lists to improper lists
--   Use `first`, `second`, ... and `rest` to access a proper list.
--   Use `car` and `cdr` to access a improper list.
--   Avoid using lists as sets, except for very small sets.
+Use the appropriate data structure, not lists simply because Lisp makes them
+easy. Lists should contain **like-typed elements**, and **must** suit the
+algorithm's performance requirements: sequential traversal of the whole list.
+Exceptions include lists known to stay very short (roughly **fewer than 16**
+elements), macro/source processing that walks lists sequentially, and literal
+constants converted into better structures at compile/load time. A short-named
+builder for such literals is useful. Use suitable data-structure libraries such
+as `cl-containers` or `lisp-interface-library` when needed; see
+[Using Libraries](#using-libraries) if none suffices.
 
-Even though back in 1958, LISP was short for "LISt Processing", its successor
-Common Lisp has been a modern programming language with modern data structures
-since the 1980s. You must use the proper data structures in your programs.
-
-You must not abuse the built-in (single-linked) `list` data structure where it
-is not appropriate, even though Common Lisp makes it especially easy to use it.
-
-You should avoid using a list as anything besides a container of elements of
-like type.
-
-You must only use lists when their performance characteristics is appropriate
-for the algorithm at hand: sequential iteration over the entire contents of the
-list.
-
-An exception where it is appropriate to use lists is when it is known in advance
-that the size of the list will remain very short (say, fewer than 16 elements).
-
-List data structures are often (but not always) appropriate for macros and
-functions used by macros at compile-time: indeed, not only is source code passed
-as lists in Common Lisp, but the macro-expansion and compilation processes will
-typically walk over the entire source code, sequentially, once. (Note that
-advanced macro systems don't directly use lists, but instead use abstract syntax
-objects that track source code location and scope; however there is no such
-advanced macro system in Common Lisp at this time.)
-
-Another exception where it is appropriate to use lists is for introducing
-literal constants that will be transformed into more appropriate data structures
-at compile-time or load-time. It is a good to have a function with a relatively
-short name to build your program's data structures from such literals.
-
-In the many cases when lists are not the appropriate data structure, various
-libraries such as [cl-containers](https://cliki.net/cl-containers) or
-[lisp-interface-library](https://cliki.net/lisp-interface-library) provide
-plenty of different data structures that should fulfill all the basic needs of
-your programs. If the existing libraries are not satisfactory, see the notes
-about [Using Libraries](#using-libraries).
-
-For cases where a list is the correct data structure, prefer proper lists to
-improper lists. Use improper lists only for lists with limited scope where
+Prefer **proper** lists; use improper lists only with limited scope where
 performance is critical.
 
-For proper lists: Use `first` to access the first element of a list, `second` to
-access the second element, etc. Use `rest` to access the tail of a list. Use
-`endp` to test for the end of the list.
+- Proper lists: `first`, `second`, etc.; `rest` for the tail; `endp` for the end.
+- Improper lists: `car`, `cdr`, and `consp` to test for the end.
+- Manual destructuring may exceptionally use `cdadr` and related accessors (and
+  `car`/`cdr` instead of `first`/`rest`). Prefer higher-level
+  `destructuring-bind` or `optima:match` when appropriate. This should be rare
+  outside alists; use structures/classes and tree libraries where suitable.
 
-For improper lists: Use `car` to access the first element of a list. Use `cdr`
-to access the tail of a list. Use `consp` to test for the end of the list.
+Do not represent sets as lists unless they are known to stay small. List access
+is O(n), versus O(log n) for suitable balanced trees; for arbitrarily large sets,
+use a proper set structure, e.g. from `lisp-interface-library`.
 
-Exceptionally, you may use `cdadr` and other variants on lists when manually
-destructuring them, instead of using a combination of several list accessor
-functions. In this context, using `car` and `cdr` instead of `first` and `rest`
-also makes sense. However, keep in mind that it might be more appropriate in
-such cases to use higher-level constructs such as `destructuring-bind` or
-`optima:match`.
+**Incorrect:** `(member foo (union list-1 list-2))` unnecessarily allocates, and
+`union` can itself be O(n²).
 
-This should be rare outside of alists, since you should be using structures and
-classes where they apply, and data structure libraries when you want trees.
-
-Using lists as representations of sets is a bad idea unless you know the lists
-will be small, because accessors are *O(n)* instead of *O(log n)*. For
-arbitrarily big sets, use balanced binary trees, for instance using
-`lisp-interface-library`.
-
-**Incorrect example:**
-
-```lisp
-(member foo (union list-1 list-2))  ; Slow O(n) best-case and creates a new list
-```
-
-
-**Correct example:**
-
-```lisp
-(or (member foo list-1) (member foo list-2))  ; O(n) average-case
-```
-
-
-Indeed, `union` not only conses unnecessarily, but it can be *O(n\^2)* on some
-implementations, and is rather slow even when it's *O(n)*.
+**Correct:** `(or (member foo list-1) (member foo list-2))`.
 
 #### Arrays
 
--   Use arrays for homogeneous sets accessed non-sequentially.
--   Use arrays where random access matters.
-
-`elt` has *O(n)* behavior when used on lists. If you are to use random element
-access on an object, use arrays and `aref` instead.
-
-The exception is for code outside the critical path where the list is known to
-be small anyway.
+Use arrays for homogeneous collections requiring non-sequential/random access;
+use `aref` instead of O(n) `elt` on a list. A small known list outside the critical
+path is an exception.
 
 #### Structures and Classes
 
--   Use structures or classes for groups of heterogeneous types.
--   Use structures or classes for returning multiple values that will not be
-    deconstructed immediately.
-
-You must not use a list as a method of passing multiple separate values of
-different types in and out of function calls. Sometimes it is convenient to use
-a list as a little ad hoc structure, i.e. "the first element of the list is a
-FOO, and the second is a BAR", but this should be used minimally since it is
-difficult to remember the little convention. You must only use a list that way
-when destructuring the list of arguments from a function, or creating a list of
-arguments to which to `apply` a function.
-
-The proper way to pass around an object comprising several values of
-heterogeneous types is to use a structure as defined by `defstruct` or
-`defclass`.
-
-You should use multiple values only when your function returns a small number of
-values that are meant to be used immediately by the caller, rather than passed
-together as arguments to further functions.
+Use a `defstruct` structure or `defclass` object for a heterogeneous group of
+values. **Do not pass heterogeneous values in an ad hoc list** except when
+destructuring a function's argument list or constructing arguments for `apply`.
+Use multiple return values only for a **small number** that the caller will
+consume immediately; use a structure/class when they will be passed together to
+further functions. The source's separate [CLOS rule](#clos) still applies.
 
 #### Pairs
 
--   Use pairs rarely, and only when representing exactly two values of
-    homogeneous types that are closely related.
--   Use `car` and `cdr` for pairs.
--   Use `null` and `nil` with pairs.
-
-When a cons cell is being used to store a pair of related objects, use `car` and
-`cdr`. Use `null` to test for `nil` in this context.
+Use cons pairs rarely, only for **exactly two closely related values of
+homogeneous types**. Access them with `car` and `cdr`; represent absence with
+`nil` and test it with `null` in this context.
 
 ### Proper Forms
 
-You must follow the proper usage regarding well-known functions, macros and
-special forms.
+Follow the prescribed uses of familiar functions, macros, and special forms.
 
 #### Defining Functions
 
--   Avoid using `&aux` and `&allow-other-keys`.
--   Avoid using `&optional` and `&key` arguments together.
--   Avoid excessive nesting of binding forms in a function
-    -   Break the function apart instead.
-    -   Consider using a `nest` macro.
+Avoid `&aux` and `&allow-other-keys`; keep accepted keywords explicit as part of
+the contract. In generic methods, unused keyword arguments should be explicitly declared
+`ignore`. **Do not use `&allow-other-keys` unless you intend to disable allowed-key
+checking for all methods when this method matches.** An appropriate exception is
+a wrapper forwarding a `&rest` plist to other functions that may vary. The
+generic's contract belongs in `defgeneric`, not `defmethod`.
 
-You should avoid using `&allow-other-keys`, since it blurs the contract of a
-function. Almost any real function (generic or not) allows a certain fixed set
-of keywords, as far as its caller is concerned, and those are part of its
-contract. If you are implementing a method of a generic function, and it does
-not need to know the values of some of the keyword arguments, you should
-explicitly `(declare (ignore ...))` all the arguments that you are not using.
-You must not use `&allow-other-keys` unless you explicitly want to disable
-checking of allowed keys for all methods when invoking the generic function on
-arguments that match this particular method. Note that the contract of a generic
-function belongs in the `defgeneric`, not in the `defmethod` which is basically
-an "implementation detail" of the generic function as far as the caller of the
-generic is concerned.
+Avoid combining `&optional` and `&key` (keywords cannot be supplied after only
+some optional arguments). If combined, optional defaults **must not be non-`nil`**.
+For portable libraries, unused **required** method arguments should be declared
+`ignorable`: implementations disagree about warnings for `ignore` or no declaration.
 
-A case where `&allow-other-keys` is appropriate is when you write a wrapper
-function to other some other functions that may vary (within the computation or
-during development), and pass around a plist as a `&REST` argument.
-
-You should avoid using `&aux` arguments.
-
-You should avoid having both `&optional` and `&key` arguments because the
-keyword arguments can't be used when only some of the optional arguments are
-specified. You must not have non-`nil` defaults to your `&optional` arguments
-when your function has both `&optional` and `&key` arguments.
-
-For maximum portability of a library, it is good form that `defmethod`
-definitions should `(declare (ignorable ...))` all the required arguments that
-they are not using. Indeed, some implementations will issue a warning if you
-`(declare (ignore ...))` those arguments, whereas other implementations will
-issue a warning if you fail to `(declare (ignore ...))` them.
-`(declare (ignorable ...))` works on all implementations.
-
-You should avoid excessive nesting of binding forms inside a function. If your
-function ends up with massive nesting, you should probably break it up into
-several functions or macros. If it is really a single conceptual unit, consider
-using a macro such as `fare-utils:nest` to at least reduce the amount of
-indentation required. It is bad form to use `nest` in typical short functions
-with 4 or fewer levels of nesting, but also bad form not to use it in the
-exceptional long functions with 10 or more levels of nesting. Use your judgment
-and consult your reviewers.
+Avoid excessive nesting of binding forms; split the function into functions or
+macros. For a truly single conceptual unit, consider `fare-utils:nest`. It is bad
+form to use `nest` in ordinary functions with **four or fewer levels**, and bad
+form not to use it in exceptional long functions with **ten or more**. Use
+judgment and consult reviewers.
 
 #### \#'FUN vs. 'FUN
 
--   Refer to a function as `#'FUN` rather than `'FUN`, unless:
-    -   Accessing global function bindings or
-    -   Dynamic linking is desired.
+Use **`#'fun`**, not `'fun`, for functional arguments (`mapcar`, `apply`, `:test`,
+`:key`, etc.). `#'` refers to the lexical function object; quoting a symbol uses
+its global `fdefinition` when called.
 
-The former, which reads as `(function fun)`, refers to the function object, and
-is lexically scoped. The latter, which reads as `(quote fun)`, refers to the
-symbol, which when called uses the global `fdefinition` of the symbol.
+Exceptions: deliberately request dynamic linking to an updated global function,
+or deliberately access a global function rather than a shadowing lexical one.
+The latter should be rare; usually name the lexical function differently.
 
-When using functions that take a functional argument (e.g., `mapcar`, `apply`,
-`:test` and `:key` arguments), you should use the `#'` to refer to the function,
-not just single quote.
-
-An exception is when you explicitly want dynamic linking, because you anticipate
-that the global function binding will be updated.
-
-Another exception is when you explicitly want to access a global function
-binding, and avoid a possible shadowing lexical binding. This shouldn't happen
-often, as it is usually a bad idea to shadow a function when you will want to
-use the shadowed function; just use a different name for the lexical function.
-
-You must use `(lambda ...)` without the function-quote `#'` notation. Unlike the
-case of `#'symbol` vs `'symbol`, there is no change in meaning. The shorter
-macro form expands into the function-quote form, thus, making the longer
-notation unnecessary.
+Use **`(lambda ...)` without `#'`**: the lambda macro already expands to the
+function-quoted form, so the longer spelling adds nothing.
 
 #### Conditional Expressions
 
--   Use `when` and `unless` when there is one alternative.
--   Use `if` when there are two alternatives.
--   Don't use `if` when one of the clauses would be a `progn`, prefer one of the
-    forms below.
--   Prefer `cond`, `case`, or its variants to nested `if` statements.
--   Prefer `and` and `or` when:
-    -   They lead to more concise code.
-    -   There are no side effects outside of an optional `error` as the last
-        clause of an `or`.
--   Prefer `ecase` and `etypecase` to `case` and `typecase`.
--   Don't use `ccase` or `ctypecase`.
--   See also the [Pitfalls](#case-and-ecase) section for
-    common pitfalls when using `case` and `ecase`.
+- One alternative: `when`/`unless`. Two: `if`. Several: `cond`.
+- Do not put `progn` in an `if` clause; use `cond`, `when`, or `unless`.
+- Prefer `cond`, `case`, or variants to nested `if`s.
+- Prefer `and`/`or` when more concise **and side-effect-free**, except that the
+  final clause of an `or` may call `error`.
+- Prefer **`ecase`/`etypecase`** to `case`/`typecase` to catch unexpected values.
 
-Use `when` and `unless` when there is only one alternative. Use `if` when there
-are two alternatives and `cond` when there are several.
-
-However, don't use `progn` for an `if` clause — use `cond`, `when`, or `unless`.
-
-Note that in Common Lisp, `when` and `unless` return `nil` when the condition is
-not met. You may take advantage of it. Nevertheless, you may use an `if` to
-explicitly return `nil` if you have a specific reason to insist on the return
-value. You may similarly include a fall-through clause `(t nil)` as the last in
-your COND, or `(otherwise nil)` as the last in your CASE, to insist on the fact
-that the value returned by the conditional matters and that such a case is going
-to be used. You should omit the fall-through clause when the conditional is used
-for side-effects.
-
-You should prefer `and` and `or` when it leads to more concise code than using
-`if`, `cond`, `when` or `unless`, and there are no side-effects involved. You
-may also use an `error` as a side-effect in the final clause of an `or`.
-
-You should use `ecase` and `etypecase` in preference to `case` and `typecase`.
-It is better to catch erroneous values early.
-
-**Incorrect example:**
+`when`/`unless` return `nil` if their condition fails; use that property. An
+explicit `if` returning `nil`, final `(t nil)` in `cond`, or `(otherwise nil)` in
+`case` may emphasize that the return value matters and that case is expected.
+Such fall-through clauses should be omitted when used only for side effects.
 
 ```lisp
-(case x ; Bad: silently returns NIL on mismatch
-  ((bar) :bar)
-  ((baz) :baz))
+;; Incorrect: silently returns NIL on unexpected X
+(case x ((bar) :bar) ((baz) :baz))
+;; Correct: reports the unexpected value
+(ecase x ((bar) :bar) ((baz) :baz))
 ```
 
-
-**Correct example:**
-
-```lisp
-(ecase x ; Better: will error on mismatch
-  ((bar) :bar)
-  ((baz) :baz))
-```
-
-
-You should not use `ccase` or `ctypecase` at all. At least, you should not use
-them in server processes, unless you have quite robust error handling
-infrastructure and make sure not to leak sensitive data this way. These are
-meant for interactive use, and can cause interesting damage if they cause data
-or control to leak to attackers.
+Do not use `ccase` or `ctypecase`; at minimum, do not use them in server processes
+without robust error handling and protection against leaking sensitive data or
+control. They are intended for interactive use. See the supplemental
+[Case and Ecase pitfalls](#case-and-ecase).
 
 #### Comparison Operators
 
--   Use `eq` and `eql` appropriately, prefer `eql` for non-performance-critical
-    code, all other things being equal.
--   Use `:START` and `:END` arguments to `string=` or `string-equal` instead of
-    using `subseq`.
--   Use `zerop`, `plusp`, or `minusp` instead of comparing to `0` or `0.0`.
--   See also
-    [Comparison Operators](#comparison-operators-1) in the
-    programming guide for proper usage.
+Prefer **`eql`** to `eq`, all else equal, except in performance-critical low-level
+code. `eq` is equivalent to `eql` plus type assumptions; treat its optimization
+like [Unsafe Operations](#unsafe-operations), since numbers/characters may fail
+`eq` unexpectedly.
 
-When choosing between `eq` and `eql`, you should use `eql` unless you are
-writing performance-critical low-level code. `eql` reduces the opportunity for a
-class of embarrassing errors (i.e. if numbers or characters are ever compared).
-There may be a tiny performance cost relative to `eq`, although under SBCL, it
-often compiles away entirely. `eq` is equivalent to `eql` and type declarations,
-and use of it for optimization should be treated just like any such
-[unsafe operations](#unsafe-operations).
+Use string comparison bounds instead of allocating substrings:
+`(string-equal s1 s2 :start1 2 :end1 6)`, rather than
+`(string-equal (subseq s1 2 6) s2)`.
 
-Also, you should use `:start` and `:end` arguments to `string=` or
-`string-equal` instead of using `subseq`; e.g.
-`(string-equal (subseq s1 2 6) s2)` should instead be
-`(string-equal s1 s2 :start1 2 :end1 6)` This is preferable because it is
-clearer and does not cons.
-
-You should use `zerop`, `plusp`, or `minusp`, instead of comparing a value to
-`0` or `0.0`.
+Use `zerop`, `plusp`, or `minusp` instead of comparisons with `0` or `0.0`. See
+[the supplemental comparison guidance](#comparison-operators-1) for semantics.
 
 #### Iteration
 
--   Prefer the `dolist` or `dotimes` forms to `loop` in simple cases.
--   Prefer `with` within a `loop` to a `let` binding:
-    -   Unless the `let` makes the code clearer.
-    -   `let` may also be used to avoid a `finally (return ...)` form.
--   Do not set iteration variables in the body of an iteration macro.
--   Generally, prefer unadorned symbols for `loop` keywords unless for
-    consistency or in macro-expansions.
+Prefer `dolist`/`dotimes` over `loop` in simple cases that do not use bindings,
+collection, block return, or other loop facilities. Prefer `loop`'s `with` over
+an enclosing `let` when it removes nesting; `let` is fine when clearer,
+including to return a bound variable rather than use `finally (return ...)`.
 
-You should simpler forms such as `dolist` or `dotimes` instead of `loop` in
-simple cases when you're not going to use any of the `loop` facilities such as
-bindings, collection or block return.
-
-Use the `with` clause of `loop` when it will avoid a level of nesting with
-`let`. You may use `let` if it makes it clearer to return one of bound variables
-after the `loop`, rather than use a clumsy `finally (return ...)` form.
-
-In the body of a `dotimes`, do not set the iteration variable.
-
-Most systems use unadorned symbols in the current package as `loop` keywords
-instead of `:keywords` from the `keyword` package. Prefer this approach, except
-when:
-
-*   That does not match the convention used in surrounding code.
-*   The `loop` form is generated by a macro, and using unadorned keywords would
-    result in a less-readable macro-expansion.
+Do not set iteration variables in an iteration macro's body, particularly
+`dotimes`. Prefer unadorned current-package symbols for `loop` keywords, except
+to match surrounding code or make a macro-generated expansion more readable.
 
 #### I/O
 
--   Use logging tools, don't write directly to `*standard-output*` or
-    `*error-output*`.
--   Don't use `print-object` for production interfaces.
--   Don't use multiple `write-` forms where a single `format` could be used.
--   Prefer `write-char` for single characters.
--   Prefer `princ-to-string` to `(format nil "~A" value)`.
--   Use `~<NEWLINE>` or `~@<NEWLINE>` in format strings to meet editor line
-    length limits.
--   Use `"~:@(~A~)"` or `"~(~A~)"` to change the case of a format control
-    parameter.
+Server code **must use logging**, not standard streams (`*standard-output*`,
+`*error-output*`, etc.), for messages/debug output. **Do not use `print-object`
+for user communication**: it is for debugging. Changes to its methods must not
+break public interfaces.
 
-When writing a server, code must not send output to the standard streams such as
-`*standard-output*` or `*error-output*`. Instead, code must use the proper
-logging framework to output messages for debugging. We are running as a server,
-so there is no console!
+Prefer one `format` to a sequence of `write-xxx` forms, so its control string can
+later be parameterized. Prefer `write-char` for one character, and
+`princ-to-string` to `(format nil "~A" value)`.
 
-Code must not use `print-object` to communicate with a user — `print-object` is
-for debugging purposes only. Modifying any `print-object` method must not break
-any public interfaces.
-
-You should not use a sequence of `write-xxx` where a single `format` string
-could be used. Using format allows you to parameterize the format control string
-in the future if the need arises.
-
-You should use `write-char` to emit a character rather than `write-string` to
-emit a single-character string.
-
-You should not use `(format nil "~A" value)`; you should use `princ-to-string`
-instead.
-
-You should use `~<Newline>` or `~@<Newline>` in format strings to keep them from
-wrapping in 100-column editor windows, or to indent sections or clauses to make
-them more readable.
-
-You should not use `string-upcase` or `string-downcase` on format control
-parameters; instead, it should use `"~:@(~A~)"` or `"~(~A~)"`.
-
+Use `~<Newline>` or `~@<Newline>` in format strings to stay within 100-column
+editors and indent clauses readably. Use `"~:@(~A~)"`/`"~(~A~)"` for case changes
+instead of applying `string-upcase`/`string-downcase` to format parameters.
 
 ## Google Common Lisp Effective Programming
 
 ### Introduction
 
-This document is intended as a supplement to the
-[Lisp Style Guide](#google-common-lisp-style-guide). It is intended to cover things not related to
-style, but that are important to new Lisp Programmers. The three main topics
-covered include common optimization techniques, as well as common pitfalls for
-new Lisp programmers.
+This is the upstream **supplement** to the [Style Guide](#google-common-lisp-style-guide).
+It covers optimization techniques and pitfalls important to new Lisp programmers,
+rather than defining additional style requirements. Normative words below retain
+the source supplement's force within that guidance; they do not turn all of its
+performance advice into mandatory style rules.
 
 ### Optimization
 
 #### Using Libraries
 
--   Prefer using existing libraries to re-implementing.
--   You may re-implement a library when:
+Prefer existing libraries to reimplementation. Reimplement only for a
+**well-documented performance need** or specialized functionality they lack.
+You **MUST NOT** start a new library without establishing that no existing one
+can be fixed or completed to meet the need.
 
-    -   there is a well-documented performance need, or
-    -   you require specialized functionality that existing libraries do not
-        provide.
-
--   You MUST NOT start a new library unless you established that none is already
-    available that can be fixed or completed into becoming what you need. That's
-    a rule against the NIH syndrome ("Not Invented Here"), which is particularly
-    strong amongst Lisp hackers.
-
--   Whichever library, old or new, you pick, you MUST get permission to
-    incorporate third-party code into the code base. You must discuss the use of
-    such library in the appropriate mailing-list, and have your code reviewed by
-    people knowledgeable in the domain and/or the Lisp library ecosystem (if
-    any). Please be ready to argue why this particular solution makes sense as
-    compared to other available libraries.
-
--   Some libraries are distributed under licenses not compatible with the
-    software you're writing, and must not be considered available for use. Be
-    aware of these issues, or consult with people who are.
+Whichever old/new library is chosen, you **MUST get permission to incorporate
+third-party code**, discuss its use on the appropriate mailing list, and have domain/Lisp
+ecosystem experts review it where available. Be ready to explain why it is
+better suited than alternatives. Libraries with incompatible licenses must not
+be treated as available; understand licensing issues or consult someone who does.
 
 #### Avoid Allocation
 
--   Make sure objects are no longer reachable after they're no longer needed.
--   Don't `CONS` unnecessarily.
+Ensure objects stop being reachable when no longer needed, and avoid unnecessary
+consing/allocation. Garbage collection does not remove reachable unused data,
+and excessive allocation harms performance.
 
-In a language with automatic storage management (such as Lisp or Java), the
-colloquial phrase "memory leak" refers to situation where storage that is not
-actually needed nevertheless does not get deallocated, because it is still
-reachable.
-
-You should be careful that when you create objects, you don't leave them
-reachable after they are no longer needed!
-
-Here's a particular trap-for-the-unwary in Common Lisp. If you make an array
-with a fill pointer, and put objects in it, and then set the fill pointer back
-to zero, those objects won't be garbage collected: the Common Lisp spec says
-that it's still OK to refer to the array entries past the end of the fill
-pointer. Note this also means that `VECTOR-POP` does not remove the element
-returned from the underlying array's storage.
-
-Don't cons (i.e., allocate) unnecessarily. Garbage collection is not magic.
-Excessive allocation is usually a performance problem.
+An array's fill pointer does not limit its underlying storage: resetting it to
+zero leaves stored objects reachable beyond the pointer. `vector-pop` likewise
+does **not** clear the returned element from storage.
 
 #### Unsafe Operations
 
--   Don't define or use unsafe operations unless:
-    -   The code has been profiled and there is a need for them.
-    -   There is documentation indicating why it is safe to use them.
+**Do not define or use unsafe operations without both profiling showing the need
+and careful documentation explaining why they are safe.** Invariants may include
+type/range restrictions; violating them can produce overflow, undefined behavior,
+crashes, or silent wrong answers. Fixnum-only operators such as `i+` are examples.
 
-Common Lisp implementations often provide backdoors to compute some operations
-faster in an unsafe way. For instance, some libraries provide arithmetic
-operations that are designed to be used with fixnums only, and yield the correct
-result faster if provided proper arguments. The downside is that the result of
-such operations is incorrect in case of overflow, and can have undefined
-behavior when called with anything but fixnums.
+Unsafe operations should be restricted to **internal package functions**; document unsafe
+argument cases and optimization declarations. Use `check-type` in exported functions to sanitize
+arguments so internals never receive illegal inputs.
 
-For instance, QPX, and QRes (in QUUX), define fixnum-optimized operators
-prefixed with `I`, e.g. `I+`, `I-`, `I*`, `I=`, `I<`, `I>`, etc.
-
-More generally, unsafe operations will yield the correct result faster than
-would the equivalent safe operation if the arguments satisfy some invariant such
-as being of the correct type and small enough; however if the arguments fail to
-satisfy the required invariants, then the operation may have undefined behavior,
-such as crashing the software, or, which is sometimes worse, silently giving
-wrong answers. Depending on whether the software is piloting an aircraft or
-other life-critical device, or whether it is accounting for large amounts money,
-such undefined behavior can kill or bankrupt people. Yet proper speed can
-sometimes make the difference between software that's unusably slow and software
-that does its job, or between software that is a net loss and software that can
-yield a profit.
-
-You must not define or use unsafe operations without both profiling results
-indicating the need for this optimization, and careful documentation explaining
-why it is safe to use them. Unsafe operations should be restricted to internal
-functions; you should carefully documented how unsafe it is to use these
-functions with the wrong arguments. You should only use unsafe operations inside
-functions internal to a package and you should document the use of the
-declarations, since calling the functions with arguments of the wrong type can
-lead to undefined behavior. Use `check-type` in functions exported from a
-package to sanitize input arguments, so that internal functions are never passed
-illegal values.
-
-On some compilers, new unsafe operations can usually be defined by combining
-type declarations with an `OPTIMIZE` declaration that has sufficiently high
-`SPEED` and low `SAFETY`. In addition to providing more speed for production
-code, such declarations may more helpful than `check-type` assertions for
-finding bugs at compile-time, on compilers that have type inference. These
-compilers may interpret those declarations as assertions if you switch to safer
-and slower optimize settings; this is good to locate a dynamic error in your
-code during development, but is not to be used for production code since it
-defeats the purpose of declarations as a performance trick.
+High `speed`/low `safety` optimization with type declarations can create unsafe
+operations. On compilers with type inference, those declarations can also expose
+compile-time bugs. Safer development settings may interpret them as runtime
+assertions to locate errors; using those slower settings for production defeats
+the purpose of this performance technique.
 
 #### DYNAMIC-EXTENT
 
--   Treat `DYNAMIC-EXTENT` as an unsafe operation, profile any code using it and
-    document why it's safe.
--   Have confidence the underlying code won't change to falsify your
-    assumptions/documentation.
+Treat `dynamic-extent` as an **unsafe operation**: profile its use and document
+why it is safe. It asserts that every object ever held by the variable (including
+its subobjects), or the local function's closure, becomes inaccessible after the
+innermost declaring function exits **by any means**. The implementation may then
+stack-allocate `&rest` lists, other lists/vectors/structures, or closures.
+An escaping object can cause later crashes, hangs, or silent corruption; future
+changes can invalidate an initially correct assertion.
 
-`DYNAMIC-EXTENT` declarations are a particular case of
-[unsafe operations](#unsafe-operations).
+Use it **sparingly**, only when:
 
-The purpose of a `DYNAMIC-EXTENT` declaration is to improve performance by
-reducing garbage collection in cases where it appears to be obvious that an
-object's lifetime is within the "dynamic extent" of a function. That means the
-object is created at some point after the function is called, and the object is
-always inaccessible after the function exits by any means.
+1. There is good reason to expect noticeable overall performance benefit
+   (usually very frequent allocation, such as an inner loop).
+2. The lifetime assertion is absolutely clear.
+3. Future changes are unlikely to invalidate it.
 
-By declaring a variable or a local function `DYNAMIC-EXTENT`, the programmer
-*asserts* to Lisp that any object that is ever a value of that variable or the
-closure that is the definition of the function has a lifetime within the dynamic
-extent of the (innermost) function that declares the variable.
+Modern generational GC already handles ephemeral objects efficiently. Checking a
+local function's uses/passing destinations is relatively tractable, so be wary
+of declaring functions; tracking every possible variable value and subobject,
+including future changes, is much harder, so be **extremely wary** of declaring
+variables.
 
-The Lisp implementation is then free to use that information to make the program
-faster. Typically, Lisp implementations can take advantage of this knowledge to
-stack-allocate:
-
--   The lists created to store `&REST` parameters.
--   Lists, vectors and structures allocated within a function.
--   Closures.
-
-If the assertion is wrong, i.e. if the programmer's claim is not true, the
-results can be *catastrophic*: Lisp can terminate any time after the function
-returns, or it can hang forever, or — worst of all — it can produce incorrect
-results without any runtime error!
-
-Even if the assertion is correct, future changes to the function might introduce
-a violation of the assertion. This increases the danger.
-
-In most cases, such objects are ephemeral. Modern Lisp implementations use
-generational garbage collectors, which are quite efficient under these
-circumstances.
-
-Therefore, `DYNAMIC-EXTENT` declarations should be used sparingly. You must only
-use them if:
-
-1.  There is some good reason to think that the overall effect on performance is
-    noticeable, and
-2.  It is absolutely clear that the assertion is true.
-3.  It is quite unlikely that the code will be changed in ways that cause the
-    declaration to become false.
-
-Point (1) is a special case of the principle of avoiding premature optimization.
-An optimization like this only matters if such objects are allocated at a very
-high rate, e.g. "inside an inner loop".
-
-Note that is relatively easy to ascertain that a function will not escape the
-dynamic extent of the current call frame by analyzing where the function is
-called and what other functions it is passed to; therefore, you should somewhat
-wary of declaring a function `DYNAMIC-EXTENT`, but this is not a high-stress
-declaration. On the other hand, it is much harder to ascertain that none of the
-objects ever bound or assigned to that variable and none of their sub-objects
-will escape the dynamic extent of the current call frame, and that they still
-won't in any future modification of a function. Therefore, you should be
-extremely wary of declaring a variable `DYNAMIC-EXTENT`.
-
-It's usually hard to predict the effect of such optimization on performance.
-When writing a function or macro that is part of a library of reusable code,
-there's no a priori way to know how often the code will run. Ideally, tools
-would be available to discover the availability and suitability of using such an
-optimization based on running simulations and test cases, but in practice this
-isn't as easy as it ought to be. It's a tradeoff. If you're very, very sure that
-the assertion is true (that any object bound to the variable and any of its
-sub-objects are only used within the dynamic extent of the specified scope), and
-it's not obvious how much time will be saved and it's not easy to measure, then
-it may be better to put in the declaration than to leave it out. (Ideally it
-would be easier to make such measurements than it actually is.)
+The source recognizes a measurement tradeoff for reusable libraries: if you are
+**very sure** no value/subobject escapes, but the savings are unclear and hard
+to measure, adding the declaration can be preferable. This qualified exception
+does not remove the need to reason about safety or likely future changes.
 
 #### REDUCE vs APPLY
 
--   Prefer using `REDUCE` to `APPLY` on a `CONS`ed up list.
--   Prefer apply for readability and performance reasons.
+Prefer `reduce` over `apply` to a freshly consed list **when the operator's
+semantics make the results equivalent**. For example:
 
-You should use `REDUCE` instead of `APPLY` and a consed-up list, where the
-semantics of the first operator argument otherwise guarantees the same
-semantics. Of course, you must use `APPLY` if it does what you want and `REDUCE`
-doesn't. For instance:
-
-**Incorrect example:**
+**Incorrect:**
 
 ```lisp
-;; This copies the list
 (apply #'+ (mapcar #'acc frobs))
 ```
 
-
-**Correct example:**
+**Correct:**
 
 ```lisp
-;; This does the same thing while avoiding the copy
 (reduce #'+ frobs :key #'acc :initial-value 0)
 ```
 
+This avoids allocation and `call-arguments-limit`/stack risks on long lists.
+Use `apply` when it has the required semantics and `reduce` does not; where
+appropriate it can be preferable for readability/performance.
 
-This is preferable because it does not do extra consing, and does not risk going
-beyond `CALL-ARGUMENTS-LIMIT` on implementations where that limit is small,
-which could blow away the stack on long lists (we want to avoid gratuitous
-non-portability in our code).
-
-However, you must be careful not to use `REDUCE` in ways that needlessly
-increase the complexity class of the computation. For instance,
-`(REDUCE 'STRCAT ...)` is *O(n\^2)* when an appropriate implementation is only
-*O(n)*. Moreover, `(REDUCE 'APPEND ...)` is also *O(n\^2)* unless you specify
-`:FROM-END T`. In such cases, you MUST NOT use `REDUCE`, and you MUST NOT use
-`(APPLY 'STRCAT ...)` or `(APPLY 'APPEND ...)` either. Instead you MUST use
-proper abstractions from a suitable library (that you may have to contribute to)
-that properly handles those cases without burdening users with implementation
-details. See for instance `UIOP:REDUCE/STRCAT`.
+**Do not use `reduce` if it needlessly worsens complexity**: `reduce` over
+concatenation can be O(n²), and over `append` is O(n²) unless `:from-end t`.
+In such cases, **do not substitute `apply` over `strcat`/`append` either**; use a
+suitable library abstraction (contributing one if necessary), such as
+`uiop:reduce/strcat`, that handles the operation efficiently without exposing
+implementation details.
 
 #### NCONC and MAPCAN
 
--   Don't use `NCONC` or `MAPCAN`.
-    -   Also don't use the `NCONC` feature of a loop.
-    -   Prefer `APPEND` instead, or better data structures.
-    -   Make an exception for low-level performance-cricitcal code.
+You should almost never use `nconc`, `mapcan`, or `loop`'s `nconc`. Prefer `append`,
+`alexandria:appendf` when updating a variable, `alexandria:mappend` in place of
+`mapcan`, and `loop`'s `append`.
 
-You should almost never use `NCONC`. You should use `APPEND` when you don't
-depend on any side-effect. You should use `ALEXANDRIA:APPENDF` when you need to
-update a variable. You should probably not depend on games being played with the
-`CDR` of the current `CONS` cell (which some might argue is suggested but not
-guaranteed by the specification); if you do, you must include a prominent
-comment explaining the use of `NCONC`; and you should probably reconsider your
-data representation strategy.
+You should probably not rely on games with the current cons's `cdr`; if you do,
+you must **include a prominent comment explaining the `nconc` use**, and you should
+probably reconsider the representation.
+`nconc` rarely improves asymptotic time or unshared-list space complexity over
+`append`, but increases bug risk. If that small cost is limiting, prefer a
+constant-time-append sequence or accumulate a tree and flatten it once in linear
+time.
 
-By extension, you should avoid `MAPCAN` or the `NCONC` feature of `LOOP`. You
-should instead respectively use `ALEXANDRIA:MAPPEND` and the `APPEND` feature of
-`LOOP`.
-
-`NCONC` is very seldom a good idea, since its time complexity class is no better
-than `APPEND`, its space complexity class also is no better than `APPEND` in the
-common case where no one else is sharing the side-effected list, and its bug
-complexity class is way higher than `APPEND`.
-
-If the small performance hit due to `APPEND` vs. `NCONC` is a limiting factor in
-your program, you have a big problem and are probably using the wrong data
-structure: you should be using sequences with constant-time append (see
-Okasaki's book, and add them to lisp-interface-library), or more simply you
-should be accumulating data in a tree that will get flattened once in linear
-time after the accumulation phase is complete.
-
-You may only use `NCONC`, `MAPCAN` or the `NCONC` feature of `LOOP` in low-level
-functions where performance matters, where the use of lists as a data structure
-has been vetted because these lists are known to be short, and when the function
-or expression the result of which are accumulated explicitly promises in its
-contract that it only returns fresh lists (in particular, it can't be a constant
-quote or backquote expression). Even then, the use of such primitives must be
-rare, and accompanied by justifying documentation.
+The only exception permits **rare, documented low-level performance-critical**
+uses, where lists have been vetted as appropriate because they stay short, and
+the producer's **explicit contract promises fresh lists**. A constant quoted or
+backquoted expression does not qualify.
 
 ### Pitfalls
 
 #### Format Conditional Directives
 
--   Be careful when using the `FORMAT` conditional directive. The parameters are
-    easy to forget.
+Remember the differing `format` conditional parameters:
 
-No parameters, e.g. `"~[Siamese~;Manx~;Persian~] Cat"` \
-Take one format argument, which should be an integer. Use it to choose a clause.
-Clause numbers are zero-based. If the number is out of range, just print
-nothing. You can provide a default value by putting a `":"` in front of the last
-`";"`. E.g. in `"~[Siamese~;Manx~;Persian~:;Alley~] Cat"`, an out-of-range arg
-prints `"Alley"`.
+| Directive | Argument handling and choice |
+| --- | --- |
+| `~[a~;b~;c~]` | Consumes an integer; selects a zero-based clause. Out of range prints nothing. `~:;` before the last clause makes it the default, e.g. `~[Siamese~;Manx~;Persian~:;Alley~] Cat`. |
+| `~:[a~;b~]` | Consumes one argument; `nil` selects the first clause, any other value the second. |
+| `~@[Siamese ~a~]` | A true next argument selects the clause **without consuming** the argument (the clause usually uses it); a false argument is consumed and prints nothing. |
+| `~#[ none~; ~s~; ~s and ~s~]` | Selects by the number of remaining arguments; otherwise works like the unparameterized directive. |
 
-`:` parameter, e.g. `"~:[Siamese~;Manx~]"` \
-Take one format argument. If it's `NIL`, use the first clause, otherwise use the
-second clause.
+A combined example:
 
-`@` parameter, e.g. `"~@[Siamese ~a~]"` \
-If the next format argument is true, use the choice, but do NOT take the
-argument. If it's false, take one format argument and print nothing. (Normally
-the clause uses the format argument.)
-
-`#` parameter, e.g. `"~#[ none~; ~s~; ~s and ~s~]"` \
-Use the number of arguments to format as the number to choose a clause. The same
-as no parameters in all other ways. Here's the full hairy example:
-`"Items:~#[ none~; ~S~; ~S and ~S~:;~@{~#[~; and~] ~S~^ ,~}~]."`
+```lisp
+"Items:~#[ none~; ~S~; ~S and ~S~:;~@{~#[~; and~] ~S~^ ,~}~]."
+```
 
 #### Comparison Operators
 
--   You should the appropriate predicates when comparing objects.
--   Also see the notes for
-    [Comparison Operators](#comparison-operators) in the style guide
-    for style rules.
+Understand the distinctions among `eq`, `eql`, `equal`, `equalp`, and type-specific
+`=`, `char=`, `char-equal`, `string=`, `string-equal`. See also the
+[Style Guide comparison rules](#comparison-operators).
 
-Lisp provides four general equality predicates: `EQ`, `EQL`, `EQUAL`, and
-`EQUALP`, which subtly vary in semantics. Additionally, Lisp provides the
-type-specific predicates `=`, `CHAR=`, `CHAR-EQUAL`, `STRING=`, and
-`STRING-EQUAL`. Know the distinction!
-
-You should use `EQL` to compare objects and symbols for *identity*.
-
-You must not use `EQ` to compare numbers or characters. Two numbers or
-characters that are `EQL` are not required by Common Lisp to be `EQ`.
-
-You should use `CHAR=` for case-dependent character comparisons, and
-`CHAR-EQUAL` for case-ignoring character comparisons.
-
-You should use `STRING=` for case-dependent string comparisons, and
-`STRING-EQUAL` for case-ignoring string comparisons.
-
-A common mistake when using `SEARCH` on strings is to provide `STRING=` or
-`STRING-EQUAL` as the `:TEST` function. The `:TEST` function is given two
-sequence elements to compare. If the sequences are strings, the `:TEST` function
-is called on two characters, so the correct tests are `CHAR=` or `CHAR-EQUAL`.
-If you use `STRING=` or `STRING-EQUAL`, the result is what you expect, but in
-some Lisp implementations it's much slower. CCL (at least as of 8/2008) creates
-a one-character string upon each comparison, for example, which is very
-expensive.
-
-You must not use exact comparison on floating point numbers, since the vague
-nature of floating point arithmetic can produce little "errors" in numeric
-value. You should compare absolute values to a threshold.
-
-You must use `=` to compare numbers, unless you really mean for `0`, `0.0` and
-`-0.0` to compare unequal, in which case you should use `EQL`. Then again, you
-must not usually use exact comparison on floating point numbers.
-
-Monetary amounts should be using decimal (rational) numbers to avoid the
-complexities and rounding errors of floating-point arithmetic. Libraries such as
-[wu-decimal](https://web.archive.org/web/20210423223211/https://wukix.com/lisp-decimals)
-([source](https://github.com/Wukix/wu-decimal)) may help you; once again, if
-this library is not satisfactory, see above about
-[Using Libraries](#using-libraries).
+- You should use **`eql` for object/symbol identity**. **Never use `eq` for numbers or
+  characters**; `eql` objects of those types need not be `eq`.
+- `char=` is case-sensitive; `char-equal` ignores case. Likewise `string=`
+  versus `string-equal` for strings.
+- For string `search`, the `:test` receives **characters**, so use `char=` or
+  `char-equal`. `string=`/`string-equal` may appear to work but can allocate a
+  one-character string per comparison and be much slower.
+- **Use `=` for numerical equality**, unless `0`, `0.0`, and `-0.0` should differ,
+  when `eql` is appropriate. **Do not normally compare floating-point values for
+  exact equality**; compare absolute differences to a threshold to accommodate
+  rounding error.
+- Monetary amounts should use decimal/rational numbers to avoid binary
+  floating-point rounding issues. A library such as
+  [wu-decimal](https://github.com/Wukix/wu-decimal) may help; follow
+  [Using Libraries](#using-libraries) if it does not suffice.
 
 #### Case and Ecase
 
--   Use `CASE` and `ECASE` for numbers, characters, and symbols only.
--   Don't use gratuitous single quotes.
--   Use `OTHERWISE` and not `T`.
+Use `case`/`ecase` **only for numbers, characters, and symbols** (including
+Booleans/keywords). They compare with `eql`: strings, pathnames, or structures
+may not match as expected, and `1` differs from `1.0`.
 
-You should only use `CASE` and `ECASE` to compare numbers, characters or symbols
-(including booleans and keywords). Indeed, `CASE` uses `EQL` for comparisons, so
-strings, pathnames and structures may not compare the way you expect, and `1`
-will differ from `1.0`.
+**Do not add single quotes** to keys: `'bar` means `(quote bar)`, making both
+`quote` and `bar` keys, so the first such clause can unexpectedly catch `quote`.
 
-You must not use gratuitous single quotes in `CASE` forms. This is a common
-error:
-
-**Incorrect example:**
+**Incorrect:**
 
 ```lisp
 (ecase x
-  ('bar :bar) ; Bad: catches QUOTE
-  ('baz :baz)) ; Bad: also would catch QUOTE
+  ('bar :bar)
+  ('baz :baz))
 ```
 
-
-**Correct example:**
+**Correct:**
 
 ```lisp
 (ecase x
-  ((bar) :bar) ; Better: won't match QUOTE
-  ((baz) :baz)) ; Better: same reason
+  ((bar) :bar)
+  ((baz) :baz))
 ```
 
-
-`'BAR` there is `(QUOTE BAR)`, meaning this leg of the case will be executed if
-`X` is `QUOTE`... and ditto for the second leg (though `QUOTE` will be caught by
-the first clause). This is unlikely to be what you really want.
-
-In `CASE` forms, you must use `otherwise` instead of `t` when you mean "execute
-this clause if the others fail". You must use `((t) ...)` when you mean "match
-the symbol T" rather than "match anything". You must also use `((nil) ...)` when
-you mean "match the symbol NIL" rather than "match nothing".
-
-Therefore, if you want to map booleans `NIL` and `T` to respective symbols
-`:BAR` and `:QUUX`, you should avoid the former way and do it the latter way:
-
-**Incorrect example:**
+In `case`, **use `otherwise`, not `t`, for the fallback**. To match the symbols
+literally, use `((t) ...)` and `((nil) ...)`; a bare `nil` key list matches
+nothing, and a bare `t` fallback matches anything. For a Boolean-only mapping:
 
 ```lisp
-(ecase x ; Bad: has no actual error case!
-  (nil :bar)) ; Bad: matches nothing
-  (t :quux)) ; Bad: matches anything
+(ecase x
+  ((nil) :bar)
+  ((t) :quux))
 ```
 
-
-**Correct example:**
-
-```lisp
-(ecase x ; Better: will actually catch non-booleans
-  ((nil) :bar)) ; Better: matches NIL
-  ((t) :quux)) ; Better: matches T
-```
-
+This still errors on non-Booleans.
 
 #### Defining Constants
 
--   You must use proper defining forms for constant values.
+Use proper defining forms. **Do not use `defconstant` for values other than
+numbers, characters, or symbols** (including Booleans/keywords). SBCL signals a
+condition if a constant is redefined to a non-`eql` value; equal-content strings
+or lists need not be `eql`. Follow the project's alternative consistently.
 
-The Lisp system we primarily use, SBCL, is very picky and signals a condition
-whenever a constant is redefined to a value not `EQL` to its previous setting.
-You must not use `DEFCONSTANT` when defining variables that are not numbers,
-characters, or symbols (including booleans and keywords). Instead, consistently
-use whichever alternative is recommended for your project.
-
-**Incorrect example:**
+Open-source libraries may use `alexandria:define-constant`; its `:test` option
+selects equality:
 
 ```lisp
-;; Two strings or lists with the same content might not be eql
+;; Incorrect: reloads may supply non-EQL values
 (defconstant +google-url+ "https://www.google.com/")
 (defconstant +valid-colors+ '(red green blue))
-```
 
-
-Open-Source libraries may use `ALEXANDRIA:DEFINE-CONSTANT` for constants other
-than numbers, characters and symbols (including booleans and keywords). You may
-use the `:TEST` keyword argument to specify an equality predicate.
-
-**Correct example:**
-
-```lisp
-;; Better, for Open-Source code:
+;; Correct for open-source code
 (alexandria:define-constant +google-url+ "https://www.google.com/"
                             :test #'string=)
 (alexandria:define-constant +valid-colors+ '(red green blue))
 ```
 
-
-Note that with optimizing implementations, such as SBCL or CMUCL, defining
-constants this way precludes any later redefinition short of `UNINTERN`ing the
-symbol and recompiling all its clients. This may make it "interesting" to debug
-things at the REPL or to deploy live code upgrades. If there is a chance that
-your "constants" are not going to be constant over the lifetime of your server
-processes after taking into consideration scheduled and unscheduled code
-patches, you should consider using `DEFPARAMETER` or `DEFVAR` instead, or
-possibly a variant of `DEFINE-CONSTANT` that builds upon some future library
-implementing global lexicals rather than `DEFCONSTANT`. You may keep the
-`+plus+` convention in these cases to document the intent of the parameter as a
-constant.
-
-Also note that `LOAD-TIME-VALUE` may help you avoid the need for defined
-constants.
+With optimizing implementations, constants may be impossible to redefine without
+uninterning and recompiling all clients. If a value might change during the
+server process's lifetime, including live patches, consider `defparameter`,
+`defvar`, or a suitable global-lexical variant instead; retaining `+plus+` names
+can document constant intent. `load-time-value` can also avoid defining constants.
 
 #### EVAL-WHEN
 
--   When using `EVAL-WHEN`, you should almost always use all of
-    `(:compile-toplevel :load-toplevel :execute)`.
+Almost always use **all three** situations:
 
-Lisp evaluation happens at several times, some of them interleaved. Be aware of
-them when writing macros.
-[EVAL-WHEN considered harmful to your mental health](https://fare.livejournal.com/146698.html).
+```lisp
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  ...)
+```
 
-In summary of the article linked above, unless you're doing truly advanced
-macrology, the only valid combination in an `EVAL-WHEN` is to include all of
-`(eval-when (:compile-toplevel :load-toplevel :execute) ...)`
+Unless doing truly advanced macrology, this is the valid combination. **Use it
+for functions, types, classes, constants, variables, etc. used by macros**.
+Omitting `:execute` usually breaks source loading; omitting `:load-toplevel`
+usually breaks loading dependent files or interactive compilation unless the
+current file was compiled in the same session. A compile-time-only change to
+readtables or compiler settings is an exception to the latter.
 
-You must use `(eval-when (:compile-toplevel :load-toplevel :execute) ...)`
-whenever you define functions, types, classes, constants, variables, etc., that
-are going to be used in macros.
+**Do not depend on compile-time and runtime effects being either shared or
+isolated**: macro expansion may occur in a different process. Valid uses of macro
+variables include:
 
-It is usually an error to omit the `:execute`, because it prevents `LOAD`ing the
-source rather than the fasl. It is usually an error to omit the `:load-toplevel`
-(except to modify e.g. readtables and compile-time settings), because it
-prevents `LOAD`ing future files or interactively compiling code that depends on
-the effects that happen at compile-time, unless the current file was
-`COMPILE-FILE`d within the same Lisp session.
-
-Regarding variables, note that because macros may or may not be expanded in the
-same process that runs the expanded code, you must not depend on compile-time
-and runtime effects being either visible or invisible at the other time. There
-are still valid uses of variables in macros:
-
--   Some variables may hold dictionaries for some new kind of definition and
-    other meta-data. If such meta-data is to be visible at runtime and/or in
-    other files, you must make sure that the macro expands into code that will
-    register the definitions to those meta-data structures at load-time, in
-    addition to effecting the registration at compile-time. Typically, your
-    top-level definitions expand to code that does the registration. if your
-    code doesn't expand at the top-level, you can sometimes use
-    `LOAD-TIME-VALUE` for good effect. In extreme cases, you may have to use
-    `ASDF-FINALIZERS:EVAL-AT-TOPLEVEL`.
--   Some variables may hold temporary data that is only used at compile-time in
-    the same file, and can be cleaned up at the end of the file's compilation.
-    Predefined such variables would include `*readtable*` or compiler-internal
-    variables holding the current optimization settings. You can often manage
-    existing and new such variables using the `:AROUND-COMPILE` hooks of `ASDF`.
+- Definition dictionaries/metadata: if needed at runtime or in other files,
+  register definitions **both at compile time and in load-time expansion code**.
+  Top-level defining forms usually emit this code; non-top-level cases may use
+  `load-time-value`, or in extreme cases `asdf-finalizers:eval-at-toplevel`.
+- Temporary compile-time data confined to the same file and cleaned up at its
+  compilation's end, including `*readtable*` and optimization settings. ASDF
+  `:around-compile` hooks can manage these variables.
 
 #### Pathnames
 
--   Common Lisp pathnames are tricky. Be aware of pitfalls. Use `UIOP`.
+Use **UIOP** where appropriate for portable pathname operations, and account for
+these pitfalls:
 
-It is surprisingly hard to properly deal with pathnames in Common Lisp.
-
-`ASDF 3` comes with a portability library `UIOP` that makes it *much* easier to
-deal with pathnames portably — and correctly — in Common Lisp. You should use it
-when appropriate.
-
-First, be aware of the discrepancies between the syntax of Common Lisp
-pathnames, which depends on which implementation and operating system you are
-using, and the native syntax of pathnames on your operating system. The Lisp
-syntax may involve quoting of special characters such as `#\.` and `#\*`, etc.,
-in addition to the quoting of `#\\ ` and `#\"` within strings. By contrast, your
-operating system's other system programming languages (shell, C, scripting
-languages) may only have one layer of quoting, into strings. Use
-`UIOP:NATIVE-NAMESTRING` and `UIOP:PARSE-NATIVE-NAMESTRING` to convert between
-Lisp and OS representations of pathnames (on good implementations such as SBCL
-and CCL, these functions work well, but on other implementations, they may fall
-back to `NAMESTRING` and `PARSE-NAMESTRING` and not escape wildcard characters
-properly).
-
-Second, when using `MERGE-PATHNAMES`, be wary of the treatment of the `HOST`
-component, which matters a lot on non-Unix platforms (and even on some Unix
-implementations). You probably should be using `UIOP:MERGE-PATHNAMES*` or
-`UIOP:SUBPATHNAME` instead of `MERGE-PATHNAMES`, especially if your expectations
-for relative pathnames are informed by the way they work in Unix or Windows;
-otherwise you might hit weird bugs whereby on some implementations, merging a
-relative pathnames with an absolute pathname results in overriding the absolute
-pathname's host and replacing it with the host from the value of
-`*DEFAULT-PATHNAME-DEFAULTS*` at the time the relative pathname was created.
-
-Third, be aware that `DIRECTORY` is not portable across implementations in how
-it handles wildcards, sub-directories, symlinks, etc. There again, `UIOP`
-provides several common abstractions to deal with pathnames, but only does so
-good a job. For a complete portable solution, use IOLib — though its Windows
-support lags behind.
-
-`LOGICAL-PATHNAME`s are not a portable abstraction, and should not be used in
-portable code. Many implementations have bugs in them, when they are supported
-at all. SBCL implements them very well, but strictly enforces the limitations on
-characters allowed by the standard, which restricts their applicability. Other
-implementations allow arbitrary characters in such pathnames, but in doing so
-are not being conformant, and are still incompatible with each other in many
-ways. You should use other pathname abstractions, such as
-`ASDF:SYSTEM-RELATIVE-PATHNAME` or the underlying `UIOP:SUBPATHNAME` and
-`UIOP:PARSE-UNIX-NAMESTRING`.
-
-Finally, be aware that paths may change between the time you build the Lisp
-image for your application, and the time you run the application from its image.
-You should be careful to reset your image to forget irrelevant build-time paths
-and reinitialize any search path from current environment variables. `ASDF` for
-instance requires you to reset its paths with `UIOP:CLEAR-CONFIGURATION`. `UIOP`
-provides hooks to call functions before an image is dumped, from which to reset
-or `makunbound` relevant variables.
+- Lisp pathname syntax varies by implementation/OS and has quoting for pathname
+  characters as well as string quoting. Use `uiop:native-namestring` and
+  `uiop:parse-native-namestring` to convert to/from OS syntax. SBCL/CCL handle
+  this well; some implementations fall back to `namestring`/`parse-namestring`
+  and may fail to escape wildcard characters.
+- `merge-pathnames` can unexpectedly replace an absolute pathname's host with
+  one inherited from `*default-pathname-defaults*` when a relative pathname was
+  created. Prefer `uiop:merge-pathnames*` or `uiop:subpathname`, particularly
+  when expecting Unix/Windows-style relative paths.
+- `directory` behavior for wildcards, subdirectories, symlinks, etc. is not
+  portable. UIOP has useful but imperfect abstractions; IOLib is a more complete
+  portable solution, though its Windows support lags.
+- **Logical pathnames should not be used in portable code**: implementations have bugs or
+  incompatible extensions, and standard character restrictions limit usefulness.
+  Prefer `asdf:system-relative-pathname`, `uiop:subpathname`, or
+  `uiop:parse-unix-namestring`.
+- Build-time paths may be invalid when a saved image runs. Reset irrelevant paths
+  and initialize search paths from the **current environment**. Reset ASDF paths
+  with `uiop:clear-configuration`; use UIOP's pre-dump hooks to reset or
+  `makunbound` relevant variables.
 
 #### SATISFIES
 
--   You must be careful when using a `SATISFIES` clause in a type specifier.
+Take care with `satisfies` in type specifiers. Most implementations cannot
+optimize it alone; many can optimize a structural type combined with it, e.g.
+`(and integer (satisfies prime-number-p))` rather than just
+`(satisfies prime-number-p)`.
 
-Most Common Lisp implementations can't optimize based on a `SATISFIES` type, but
-many of them offer simple optimizations based on a type of the form
-`(AND FOO (SATISFIES BAR-P))` where the first term of the `AND` clause describes
-the structure of the object without any `SATISFIES` and the second term is the
-`SATISFIES`.
+Type-specifier **`and` is symmetric**, permits reordering, and is **not** the
+expression language's left-to-right short circuit. The `integer` test does not
+protect the predicate from non-integer arguments. Implementations may also call
+the predicate on assorted objects at compile time.
 
-**Incorrect example:**
+Therefore every `satisfies` predicate **MUST accept objects of any type**, and
+**MUST be defined in `eval-when`**, along with any variables/functions it uses.
 
-```lisp
-; Can't optimize
-(deftype prime-number () (satisfies prime-number-p))
-```
+**Incorrect:** a predicate that calls `abs` without first checking `integerp`,
+or is not available at compile time.
 
-
-**Correct example:**
-
-```lisp
-;; Can optimize based on the known type
-(deftype prime-number () (and integer (satisfies prime-number-p))
-```
-
-
-However, `AND` in the `DEFTYPE` language isn't a left-to-right short-circuit
-operator as in the expression language; it is a symmetrical connector that
-allows for reordering subterms and doesn't guarantee short-circuiting.
-Therefore, in the above example, you cannot rely on the test for `INTEGER`ness
-to protect the function `PRIME-NUMBER-P` from being supplied non-integer
-arguments to test for being of instances of the type. Implementations may, and
-some *will*, invoke `SATISFIES`-specified function at compile-time to test
-various relevant objects.
-
-That is why any function specified in a `SATISFIES` clause MUST accept objects
-of any type as argument to the function, and MUST be defined within an
-`EVAL-WHEN` (as well as any variable it uses or function it calls):
-
-**Incorrect example:**
+**Correct:**
 
 ```lisp
-;; Doesn't check if argument is an integer, and the function isn't defined at
-;; compile time.
-(defun prime-number-p (n)
-  (let ((m (abs n)))
-    (if (<= m *prime-number-cutoff*)
-        (small-prime-number-p m)
-        (big-prime-number-p m))))
-```
-
-
-**Correct example:**
-
-```lisp
-;; Works when called at compile-time or passed a non-integer argument.
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defun prime-number-p (n)
-    (when (integerp n) ; Better
+    (when (integerp n)
       (let ((m (abs n)))
         (if (<= m *prime-number-cutoff*)
             (small-prime-number-p m)
             (big-prime-number-p m))))))
 ```
 
+Its dependencies must also satisfy the compile-time availability requirement.
+Even the standard's `(and integer (satisfies evenp))` example is unsafe:
+`evenp` errors rather than returning `nil` for non-integers.
 
-In particular, the above means that the
-[example](https://www.lispworks.com/documentation/HyperSpec/Body/t_satisf.htm)
-used in the Common Lisp Standard is erroneous: `(and integer (satisfies evenp))`
-is *not* a safe, conformant type specifier to use, because `EVENP` will throw an
-error rather than return `NIL` when passed a non-integer as an argument.
-
-Finally, there is a catch when your `DEFTYPE` code expands to a `SATISFIES` with
-a dynamically generated function:
-
--   You cannot control when implementations will or will not expand a `DEFTYPE`.
--   The expansion itself cannot contain a function definition or any code in the
-    expression language.
--   You cannot control when the expansion is used, it may happen in a different
-    process that didn't expand the definition.
-
-Therefore, you cannot merely create the function as a side-effect of expansion
-using `EVAL` at type-expansion time. The solution is to use
-`ASDF-FINALIZERS:EVAL-AT-TOPLEVEL` instead. See the very last point in the
-discussion about [EVAL](#eval).
-
-Common Lisp is hard to satisfy.
-
+If `deftype` expands to a `satisfies` using a dynamically generated function,
+remember that expansion timing is uncontrolled, the expansion cannot include
+expression-language code/function definitions, and use may occur in a different
+process. **Creating the function only via `eval` as an expansion side effect is
+insufficient**. Use `asdf-finalizers:eval-at-toplevel` as described in
+[EVAL](#eval) so the definition also exists when loading compiled code.
 
 ## Sources and licensing
 
+- `lispguide.md`: [fixed upstream source](https://github.com/google/styleguide/blob/572c673d9058242c049fbc8248b17029726c7afa/lispguide.md);
+  [official published guide](https://google.github.io/styleguide/lispguide.html).
+- `lispprogrammingguide.md`: [fixed upstream source](https://github.com/google/styleguide/blob/572c673d9058242c049fbc8248b17029726c7afa/lispprogrammingguide.md);
+  [official published guide](https://google.github.io/styleguide/lispprogrammingguide.html).
 
-- `lispguide.md`: [fixed upstream source](https://github.com/google/styleguide/blob/572c673d9058242c049fbc8248b17029726c7afa/lispguide.md); [official published guide](https://google.github.io/styleguide/lispguide.html).
+Upstream: Google Style Guides, by Google and the contributors or authors named in
+the source documents, at commit `572c673d9058242c049fbc8248b17029726c7afa`.
+The upstream repository README states
+[CC BY 3.0](https://creativecommons.org/licenses/by/3.0/) for documentation and
+[Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0) for code samples.
+Preserve any more specific attribution or license notices in the originals.
 
-- `lispprogrammingguide.md`: [fixed upstream source](https://github.com/google/styleguide/blob/572c673d9058242c049fbc8248b17029726c7afa/lispprogrammingguide.md); [official published guide](https://google.github.io/styleguide/lispprogrammingguide.html).
-
-
-Upstream: Google Style Guides, by Google and the contributors or authors named in the source documents, at commit `572c673d9058242c049fbc8248b17029726c7afa`. The upstream repository README states [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/) for documentation and [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0) for code samples. Preserve any more specific attribution or license notices in the original documents.
-
-
-Local changes: removed site templates, converted presentational HTML to Markdown while retaining visible content and correct/incorrect example labels, normalized definition lists and reference links, and combined the listed source documents into one language file. Source code examples are retained verbatim. Original illustrations, where present, are linked at their source. No rule summary or translation was added. This is an unofficial redistribution; Google does not endorse this skill.
+Local changes: this is an **editorially condensed adaptation**, combining both
+sources in one Markdown file. Repeated rules, background, and redundant examples
+were shortened; selected examples were retained or adapted, and malformed sample
+parentheses were corrected. Site templates and presentational HTML were removed,
+and links/headings were normalized. It is not a verbatim or complete reproduction.
+Effective Programming remains supplemental guidance. Original-source links are
+optional references. This is an unofficial adaptation; Google does not endorse
+this skill.
